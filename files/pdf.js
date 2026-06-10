@@ -8,7 +8,7 @@ function generarPDF(resultado) {
     const logo = document.getElementById('logo-image');
     const logoData = logo ? logo.src : null;
     
-    const CARGO = 'Coordinador HSEQ';
+    const CARGO = 'Analista SIG';
     
     let y = 20;
     
@@ -444,7 +444,7 @@ function getRecomendaciones(analisis) {
     
     if (recomendaciones.length === 0) {
         recomendaciones.push('Mantenimiento de buenas prácticas identificadas en la evaluación HSEQ');
-        recomendaciones.push('Seguimiento periódico del desempeño en el cargo de Coordinador HSEQ');
+        recomendaciones.push('Seguimiento periódico del desempeño en el cargo de Analista SIG');
     }
     
     return recomendaciones.slice(0, 5);
@@ -498,7 +498,7 @@ function mostrarResultado(resultado) {
                 <img src="../Sin-titulo-1.png" alt="MARYTER" class="resultado-logo" id="logo-image">
                 <div>
                     <h3>DRAGADOS MAR Y TER</h3>
-                    <p>Evaluación DISC - Perfil para Coordinador HSEQ</p>
+                    <p>Evaluación DISC - Perfil para Analista SIG</p>
                 </div>
             </div>
             
@@ -558,7 +558,7 @@ function mostrarResultado(resultado) {
             
             <div class="card mb-4">
                 <div class="card-body">
-                    <h5 class="card-title">Compatibilidad con el Cargo: Coordinador HSEQ</h5>
+                    <h5 class="card-title">Compatibilidad con el Cargo: Analista SIG</h5>
                     <table class="table table-bordered table-sm">
                         <thead>
                             <tr>

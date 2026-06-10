@@ -154,10 +154,8 @@ function mostrarPreguntaTecnica() {
             <div class="opciones-disc" style="display:flex;flex-direction:column;gap:8px;">
                 ${pregunta.opciones.map((opt, i) => {
                     const sel = respuestaAnterior === i ? 'seleccionada' : '';
-                    const correcta = respondido && i === pregunta.correct ? 'opcion-correcta' : '';
-                    const incorrecta = respondido && respuestaAnterior === i && i !== pregunta.correct ? 'opcion-incorrecta' : '';
                     return `
-                    <label class="opcion-disc ${sel} ${correcta} ${incorrecta}"
+                    <label class="opcion-disc ${sel}"
                            style="cursor:pointer;padding:12px 16px;border-radius:8px;border:2px solid #dee2e6;display:flex;align-items:center;gap:12px;"
                            onclick="seleccionarRespuestaTecnica(${i})" id="opc-${i}">
                         <span style="width:28px;height:28px;border-radius:50%;background:#e9ecef;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;flex-shrink:0;">${letters[i]}</span>
@@ -166,13 +164,9 @@ function mostrarPreguntaTecnica() {
                 }).join('')}
             </div>
 
-            ${respondido ? `
-            <div class="alert ${respuestaAnterior === pregunta.correct ? 'alert-success' : 'alert-danger'}" style="margin-top:12px;font-size:0.9rem;">
-                ${respuestaAnterior === pregunta.correct ? '✓ Correcto!' : '✗ Incorrecto'}
-                <br><small>${pregunta.retroalimentacion}</small>
-            </div>` : isTimeout ? `
-            <div class="alert alert-warning" style="margin-top:12px;font-size:0.9rem;">
-                ⏱ Tiempo agotado
+            ${respondido || isTimeout ? `
+            <div class="alert alert-secondary" style="margin-top:12px;font-size:0.9rem;text-align:center;">
+                <small>Respuesta registrada</small>
             </div>` : ''}
         </div>
 
@@ -612,13 +606,13 @@ function analizarPerfilDISC(puntuaciones) {
     const promedioGeneral = Object.values(analisis.compatibilidad).reduce((a, b) => a + b, 0) / Object.keys(analisis.compatibilidad).length;
 
     if (promedioGeneral >= 75) {
-        analisis.recomendacion = 'APTO para el cargo de Coordinador HSEQ. El perfil DISC muestra alta compatibilidad con los requisitos del puesto. Demuestra competencias para gestionar el SG-SST, liderar en seguridad, comunicar riesgos y garantizar cumplimiento normativo en operaciones de alto riesgo.';
+        analisis.recomendacion = 'APTO para el cargo de Analista SIG. El perfil DISC muestra alta compatibilidad con los requisitos del puesto. Demuestra competencias para gestionar el SG-SST, liderar en seguridad, comunicar riesgos y garantizar cumplimiento normativo en operaciones de alto riesgo.';
     } else if (promedioGeneral >= 55) {
         analisis.recomendacion = 'APTO CON DESARROLLO. El perfil muestra compatibilidad media con el cargo HSEQ. Se recomienda capacitación técnica y acompañamiento en los primeros meses.';
     } else if (promedioGeneral >= 40) {
         analisis.recomendacion = 'REQUIERE EVALUACIÓN ADICIONAL. El perfil muestra algunas fortalezas pero brechas significativas para el cargo HSEQ. Se recomienda entrevista conductual profunda.';
     } else {
-        analisis.recomendacion = 'NO RECOMENDADO para el cargo de Coordinador HSEQ. El perfil DISC no muestra la compatibilidad necesaria.';
+        analisis.recomendacion = 'NO RECOMENDADO para el cargo de Analista SIG. El perfil DISC no muestra la compatibilidad necesaria.';
     }
 
     return analisis;

@@ -231,88 +231,88 @@ const PREGUNTAS = {
                 id: 1,
                 categoria: "Legislación SST",
                 pregunta: "¿Qué decreto unifica y reglamenta el Sistema de Gestión de la Seguridad y Salud en el Trabajo (SG-SST) en Colombia?",
-                opciones: ["Decreto 1072 de 2015", "Resolución 2400 de 1979", "Ley 1562 de 2012", "Decreto 472 de 2015"],
-                correct: 0,
+                opciones: ["Resolución 2400 de 1979", "Ley 1562 de 2012", "Decreto 1072 de 2015", "Decreto 472 de 2015"],
+                correct: 2,
                 retroalimentacion: "El Decreto 1072 de 2015 es el Decreto Único Reglamentario del Sector Trabajo y consolida el SG-SST en el Libro 2, Parte 2, Título 4, Capítulo 6."
             },
             {
                 id: 2,
                 categoria: "Legislación SST",
                 pregunta: "La Resolución 0312 de 2019 define los Estándares Mínimos del SG-SST. ¿A qué tipo de empresa aplica el estándar más completo (60 estándares)?",
-                opciones: ["Empresas con más de 50 trabajadores y riesgo III, IV o V", "Empresas con 10 o más trabajadores, riesgo I y II", "Toda empresa independiente de su tamaño", "Solo empresas del sector industrial"],
-                correct: 0,
+                opciones: ["Empresas con 10 o más trabajadores, riesgo I y II", "Toda empresa independiente de su tamaño", "Empresas con más de 50 trabajadores y riesgo III, IV o V", "Solo empresas del sector industrial"],
+                correct: 2,
                 retroalimentacion: "Las empresas con más de 50 trabajadores clasificadas en riesgo III, IV o V deben cumplir los 60 estándares mínimos definidos por la Resolución 0312 de 2019."
             },
             {
                 id: 3,
                 categoria: "Legislación SST",
                 pregunta: "Según la normatividad colombiana, ¿con qué periodicidad mínima debe revisarse el SG-SST por parte de la alta dirección?",
-                opciones: ["Anualmente", "Cada 6 meses", "Cada 2 años", "Solo cuando ocurre un accidente grave"],
-                correct: 0,
+                opciones: ["Cada 6 meses", "Cada 2 años", "Solo cuando ocurre un accidente grave", "Anualmente"],
+                correct: 3,
                 retroalimentacion: "El Decreto 1072 de 2015 establece que la alta dirección debe revisar el SG-SST al menos una vez al año."
             },
             {
                 id: 4,
                 categoria: "Legislación SST",
                 pregunta: "¿Cuál de las siguientes normas ISO corresponde al Sistema de Gestión de Seguridad y Salud en el Trabajo?",
-                opciones: ["ISO 45001:2018", "ISO 9001:2015", "ISO 14001:2015", "ISO 31000:2018"],
-                correct: 0,
+                opciones: ["ISO 9001:2015", "ISO 45001:2018", "ISO 14001:2015", "ISO 31000:2018"],
+                correct: 1,
                 retroalimentacion: "ISO 45001:2018 es la norma internacional para Sistemas de Gestión de Seguridad y Salud en el Trabajo, reemplazando a OHSAS 18001."
             },
             {
                 id: 5,
                 categoria: "Gestión de Peligros y Riesgos",
                 pregunta: "Según la GTC-45, ¿cuál es la fórmula para determinar el nivel de riesgo?",
-                opciones: ["NR = Nivel de probabilidad × Nivel de consecuencia", "NR = Probabilidad + Consecuencia", "NR = Nivel de deficiencia × Nivel de exposición", "NR = Frecuencia × Gravedad × Exposición"],
-                correct: 0,
+                opciones: ["NR = Probabilidad + Consecuencia", "NR = Nivel de probabilidad × Nivel de consecuencia", "NR = Nivel de deficiencia × Nivel de exposición", "NR = Frecuencia × Gravedad × Exposición"],
+                correct: 1,
                 retroalimentacion: "Según la GTC-45, el Nivel de Riesgo = Nivel de Probabilidad × Nivel de Consecuencia."
             },
             {
                 id: 6,
                 categoria: "Gestión de Peligros y Riesgos",
                 pregunta: "En la jerarquía de controles para la mitigación de riesgos laborales, ¿cuál es el control de mayor eficacia?",
-                opciones: ["Eliminación del peligro", "Elementos de Protección Personal (EPP)", "Controles administrativos", "Sustitución del agente peligroso"],
-                correct: 0,
+                opciones: ["Elementos de Protección Personal (EPP)", "Eliminación del peligro", "Controles administrativos", "Sustitución del agente peligroso"],
+                correct: 1,
                 retroalimentacion: "La jerarquía de controles establece que la Eliminación del peligro es el control más efectivo, seguido de Sustitución, Controles de ingeniería, Administrativos y EPP."
             },
             {
                 id: 7,
                 categoria: "Gestión de Peligros y Riesgos",
                 pregunta: "Un trabajador realiza labores de carga y descarga en un puerto fluvial durante 8 horas diarias. ¿Cuál es la clasificación de peligro primaria que debe identificarse?",
-                opciones: ["Peligro químico por combustibles", "Peligro biomecánico por manipulación manual de cargas", "Peligro locativo por superficies irregulares", "Peligro psicosocial por trabajo monótono"],
-                correct: 1,
+                opciones: ["Peligro químico por combustibles", "Peligro locativo por superficies irregulares", "Peligro psicosocial por trabajo monótono", "Peligro biomecánico por manipulación manual de cargas"],
+                correct: 3,
                 retroalimentacion: "La manipulación manual de cargas durante jornadas prolongadas constituye el peligro biomecánico principal."
             },
             {
                 id: 8,
                 categoria: "Gestión de Peligros y Riesgos",
                 pregunta: "¿Qué documento formaliza la autorización para ejecutar actividades de alto riesgo como trabajo en alturas, espacios confinados o trabajo en caliente?",
-                opciones: ["Acta de inspección de seguridad", "Permiso de trabajo", "Plan de emergencias", "Procedimiento operativo estándar"],
-                correct: 1,
+                opciones: ["Permiso de trabajo", "Acta de inspección de seguridad", "Plan de emergencias", "Procedimiento operativo estándar"],
+                correct: 0,
                 retroalimentacion: "El Permiso de Trabajo es el documento formal que autoriza la ejecución de actividades de alto riesgo."
             },
             {
                 id: 9,
                 categoria: "Gestión Ambiental",
                 pregunta: "Según ISO 14001:2015, ¿cuál es el propósito principal de identificar los aspectos e impactos ambientales de una organización?",
-                opciones: ["Cumplir con los requisitos legales mínimos", "Determinar los aspectos ambientales significativos para establecer controles", "Calcular la huella de carbono corporativa", "Obtener la certificación ambiental ante autoridades"],
-                correct: 1,
+                opciones: ["Cumplir con los requisitos legales mínimos", "Calcular la huella de carbono corporativa", "Obtener la certificación ambiental ante autoridades", "Determinar los aspectos ambientales significativos para establecer controles"],
+                correct: 3,
                 retroalimentacion: "ISO 14001:2015 requiere identificar aspectos e impactos para determinar cuáles son significativos y establecer controles."
             },
             {
                 id: 10,
                 categoria: "Gestión Ambiental",
                 pregunta: "En el contexto de operaciones marítimas/fluviales, ¿cuál de los siguientes constituye un aspecto ambiental significativo?",
-                opciones: ["Generación de ruido en oficinas administrativas", "Descarga de aguas de sentina sin tratamiento al río", "Consumo de papel en área administrativa", "Uso de iluminación LED en bodegas"],
-                correct: 1,
+                opciones: ["Generación de ruido en oficinas administrativas", "Consumo de papel en área administrativa", "Uso de iluminación LED en bodegas", "Descarga de aguas de sentina sin tratamiento al río"],
+                correct: 3,
                 retroalimentacion: "La descarga de aguas de sentina sin tratamiento constituye un aspecto ambiental significativo con alto impacto sobre los ecosistemas acuáticos."
             },
             {
                 id: 11,
                 categoria: "Calidad y Gestión Documental",
                 pregunta: "Según ISO 9001:2015, ¿qué término reemplaza a 'registros' y 'documentos' de versiones anteriores?",
-                opciones: ["Evidencias objetivas", "Información documentada", "Procedimientos documentados", "Registros de calidad"],
-                correct: 1,
+                opciones: ["Evidencias objetivas", "Procedimientos documentados", "Información documentada", "Registros de calidad"],
+                correct: 2,
                 retroalimentacion: "ISO 9001:2015 unifica los conceptos bajo el término 'Información documentada'."
             },
             {
@@ -327,40 +327,40 @@ const PREGUNTAS = {
                 id: 13,
                 categoria: "Calidad y Gestión Documental",
                 pregunta: "¿Cuál es el indicador más adecuado para medir el desempeño en Seguridad y Salud en el Trabajo en términos de accidentalidad?",
-                opciones: ["Número total de trabajadores capacitados", "Porcentaje de EPP entregados", "Tasa de Frecuencia de Accidentalidad (TFA)", "Número de inspecciones realizadas"],
-                correct: 2,
+                opciones: ["Tasa de Frecuencia de Accidentalidad (TFA)", "Número total de trabajadores capacitados", "Porcentaje de EPP entregados", "Número de inspecciones realizadas"],
+                correct: 0,
                 retroalimentacion: "La TFA = (N° accidentes × 240.000) / HHT es el indicador estándar de accidentalidad."
             },
             {
                 id: 14,
                 categoria: "Competencias y Situaciones Prácticas",
-                pregunta: "Durante una inspección en una embarcación, un trabajador reporta que su chaleco salvavidas está en mal estado. ¿Cuál es la acción prioritaria del Coordinador HSEQ?",
-                opciones: ["Registrar el hallazgo para incluirlo en el próximo informe mensual", "Indicar al trabajador que use el chaleco con cuidado hasta conseguir uno nuevo", "Suspender la actividad hasta reponer el EPP y documentar el reemplazo", "Notificar al supervisor por correo electrónico y esperar respuesta"],
-                correct: 2,
+                pregunta: "Durante una inspección en una embarcación, un trabajador reporta que su chaleco salvavidas está en mal estado. ¿Cuál es la acción prioritaria del Analista SIG?",
+                opciones: ["Registrar el hallazgo para incluirlo en el próximo informe mensual", "Indicar al trabajador que use el chaleco con cuidado hasta conseguir uno nuevo", "Notificar al supervisor por correo electrónico y esperar respuesta", "Suspender la actividad hasta reponer el EPP y documentar el reemplazo"],
+                correct: 3,
                 retroalimentacion: "El chaleco es EPP crítico en operaciones fluviales; se debe suspender la actividad y reponer el equipo inmediatamente."
             },
             {
                 id: 15,
                 categoria: "Competencias y Situaciones Prácticas",
-                pregunta: "Un contratista externo inicia labores sin haber presentado el plan de gestión de residuos peligrosos. ¿Qué debe hacer el Coordinador HSEQ?",
-                opciones: ["Permitir el inicio y solicitar el documento durante la semana", "Verificar si el contratista tiene experiencia previa antes de decidir", "Detener el inicio de actividades hasta cumplir el estándar de contratistas", "Solicitar al área de compras que gestione el documento"],
-                correct: 2,
+                pregunta: "Un contratista externo inicia labores sin haber presentado el plan de gestión de residuos peligrosos. ¿Qué debe hacer el Analista SIG?",
+                opciones: ["Detener el inicio de actividades hasta cumplir el estándar de contratistas", "Permitir el inicio y solicitar el documento durante la semana", "Verificar si el contratista tiene experiencia previa antes de decidir", "Solicitar al área de compras que gestione el documento"],
+                correct: 0,
                 retroalimentacion: "Los estándares mínimos de seguridad de contratistas son requisito previo al inicio de obras."
             },
             {
                 id: 16,
                 categoria: "Competencias y Situaciones Prácticas",
                 pregunta: "Se presenta un accidente laboral leve en campo. ¿Cuál es la secuencia correcta de acciones según el protocolo de investigación?",
-                opciones: ["Fotografiar, reportar a la ARL, investigar causas, emitir plan de acción", "Esperar la visita de la ARL antes de tomar cualquier acción", "Atender al lesionado, asegurar la escena, reportar, investigar y emitir plan de acción", "Investigar inmediatamente y reportar solo si hay recurrencia"],
-                correct: 2,
+                opciones: ["Atender al lesionado, asegurar la escena, reportar, investigar y emitir plan de acción", "Fotografiar, reportar a la ARL, investigar causas, emitir plan de acción", "Esperar la visita de la ARL antes de tomar cualquier acción", "Investigar inmediatamente y reportar solo si hay recurrencia"],
+                correct: 0,
                 retroalimentacion: "El protocolo correcto: (1) Atención médica, (2) Asegurar escena, (3) Reporte a ARL, (4) Investigación, (5) Plan de acción."
             },
             {
                 id: 17,
                 categoria: "Competencias y Situaciones Prácticas",
-                pregunta: "¿Qué característica es fundamental en el liderazgo técnico del Coordinador HSEQ al dirigir capacitaciones al personal operativo portuario?",
-                opciones: ["Usar terminología técnica avanzada para demostrar experticia", "Centrar las capacitaciones exclusivamente en la normatividad legal", "Adaptar el lenguaje al nivel del personal y validar la comprensión con ejercicios prácticos", "Delegar la capacitación a supervisores para optimizar tiempo"],
-                correct: 2,
+                pregunta: "¿Qué característica es fundamental en el liderazgo técnico del Analista SIG al dirigir capacitaciones al personal operativo portuario?",
+                opciones: ["Adaptar el lenguaje al nivel del personal y validar la comprensión con ejercicios prácticos", "Usar terminología técnica avanzada para demostrar experticia", "Centrar las capacitaciones exclusivamente en la normatividad legal", "Delegar la capacitación a supervisores para optimizar tiempo"],
+                correct: 0,
                 retroalimentacion: "La comunicación asertiva y adaptada al nivel del receptor es clave en SST."
             },
             {
@@ -375,48 +375,48 @@ const PREGUNTAS = {
                 id: 19,
                 categoria: "Competencias y Situaciones Prácticas",
                 pregunta: "En el contexto de actividades de alto riesgo en operaciones fluviales, ¿qué es un ATS (Análisis de Trabajo Seguro)?",
-                opciones: ["Un examen médico previo al trabajo en embarcaciones", "El registro de los accidentes ocurridos durante trabajos fluviales", "El formato de inspección de embarcaciones exigido por la DIMAR", "Una técnica que descompone una tarea en pasos para identificar peligros en cada paso antes de ejecutarla"],
-                correct: 3,
+                opciones: ["Una técnica que descompone una tarea en pasos para identificar peligros en cada paso antes de ejecutarla", "Un examen médico previo al trabajo en embarcaciones", "El registro de los accidentes ocurridos durante trabajos fluviales", "El formato de inspección de embarcaciones exigido por la DIMAR"],
+                correct: 0,
                 retroalimentacion: "El ATS es una herramienta preventiva que desglosa una tarea en pasos, identifica peligros y define controles."
             },
             {
                 id: 20,
                 categoria: "Competencias y Situaciones Prácticas",
                 pregunta: "¿Con qué frecuencia mínima deben realizarse los exámenes médicos ocupacionales periódicos según la normatividad colombiana?",
-                opciones: ["Cada año para todos los trabajadores sin distinción", "Solo al ingreso y al retiro del trabajador", "Cuando el trabajador lo solicite voluntariamente", "Cada 2 años para riesgo I y II; cada año para riesgo III, IV y V"],
-                correct: 3,
+                opciones: ["Cada año para todos los trabajadores sin distinción", "Solo al ingreso y al retiro del trabajador", "Cada 2 años para riesgo I y II; cada año para riesgo III, IV y V", "Cuando el trabajador lo solicite voluntariamente"],
+                correct: 2,
                 retroalimentacion: "La Resolución 2346 de 2007 establece la periodicidad según el nivel de riesgo: anual para III-V y cada 2 años para I-II."
             },
             {
                 id: 21,
                 categoria: "Legislación SST",
                 pregunta: "Según la Ley 1562 de 2012, ¿cómo se define accidente de trabajo?",
-                opciones: ["Es toda lesión que sufra el trabajador durante su jornada laboral", "Es cualquier enfermedad diagnosticada por un médico", "Es toda incapacidad que genere más de 3 días de ausencia", "Es todo suceso repentino que sobrevenga por causa del trabajo y produzca lesión orgánica o funcional"],
-                correct: 3,
+                opciones: ["Es toda lesión que sufra el trabajador durante su jornada laboral", "Es todo suceso repentino que sobrevenga por causa del trabajo y produzca lesión orgánica o funcional", "Es cualquier enfermedad diagnosticada por un médico", "Es toda incapacidad que genere más de 3 días de ausencia"],
+                correct: 1,
                 retroalimentacion: "La Ley 1562 de 2012 define accidente de trabajo como todo suceso repentino que sobrevenga por causa del trabajo y produzca lesión."
             },
             {
                 id: 22,
                 categoria: "Gestión de Peligros y Riesgos",
                 pregunta: "¿Cuál es el objetivo principal del COPASST (Comité Paritario de Seguridad y Salud en el Trabajo)?",
-                opciones: ["Aprobar el presupuesto anual de SST", "Contratar la ARL para la empresa", "Elaborar las nóminas del personal operativo", "Investigar accidentes y promover la salud ocupacional en la empresa"],
-                correct: 3,
+                opciones: ["Aprobar el presupuesto anual de SST", "Contratar la ARL para la empresa", "Investigar accidentes y promover la salud ocupacional en la empresa", "Elaborar las nóminas del personal operativo"],
+                correct: 2,
                 retroalimentacion: "El COPASST tiene como función principal la promoción y vigilancia de las normas de seguridad y salud en el trabajo."
             },
             {
                 id: 23,
                 categoria: "Gestión Ambiental",
                 pregunta: "Según la legislación colombiana, ¿cómo debe gestionarse un residuo peligroso generado en mantenimiento de embarcaciones?",
-                opciones: ["Almacenarlo junto con residuos ordinarios para optimizar espacio", "Disponerlo en el relleno sanitario municipal", "Verterlo al alcantarillado con abundante agua", "Almacenarlo en recipientes rotulados, etiquetados y entregarlo a gestor autorizado"],
-                correct: 3,
+                opciones: ["Almacenarlo junto con residuos ordinarios para optimizar espacio", "Almacenarlo en recipientes rotulados, etiquetados y entregarlo a gestor autorizado", "Disponerlo en el relleno sanitario municipal", "Verterlo al alcantarillado con abundante agua"],
+                correct: 1,
                 retroalimentacion: "Los residuos peligrosos (RESPEL) requieren almacenamiento segregado, rotulado y disposición a través de gestores autorizados."
             },
             {
                 id: 24,
                 categoria: "Calidad y Gestión Documental",
                 pregunta: "En un Sistema de Gestión Integrado (SIG), ¿qué significa el enfoque basado en procesos?",
-                opciones: ["Documentar todos los procedimientos de la empresa", "Tener un organigrama jerárquico bien definido", "Certificar todos los procesos ante una entidad acreditada", "Gestionar las actividades como procesos interrelacionados que transforman entradas en salidas"],
-                correct: 3,
+                opciones: ["Documentar todos los procedimientos de la empresa", "Gestionar las actividades como procesos interrelacionados que transforman entradas en salidas", "Tener un organigrama jerárquico bien definido", "Certificar todos los procesos ante una entidad acreditada"],
+                correct: 1,
                 retroalimentacion: "El enfoque basado en procesos (ISO 9001, ISO 14001, ISO 45001) permite gestionar las actividades como procesos interrelacionados."
             }
         ]
@@ -539,13 +539,13 @@ function analizarPerfilDISC(puntuaciones) {
     const promedioGeneral = Object.values(analisis.compatibilidad).reduce((a, b) => a + b, 0) / Object.keys(analisis.compatibilidad).length;
     
     if (promedioGeneral >= 75) {
-        analisis.recomendacion = 'APTO para el cargo de Coordinador HSEQ. El perfil DISC muestra alta compatibilidad con los requisitos del puesto. El candidato demuestra las competencias conductuales necesarias para gestionar el SG-SST, liderar en seguridad, comunicar riesgos efectivamente, y garantizar el cumplimiento normativo y ambiental en operaciones de alto riesgo.';
+        analisis.recomendacion = 'APTO para el cargo de Analista SIG. El perfil DISC muestra alta compatibilidad con los requisitos del puesto. El candidato demuestra las competencias conductuales necesarias para gestionar el SG-SST, liderar en seguridad, comunicar riesgos efectivamente, y garantizar el cumplimiento normativo y ambiental en operaciones de alto riesgo.';
     } else if (promedioGeneral >= 55) {
-        analisis.recomendacion = 'APTO CON DESARROLLO. El perfil muestra compatibilidad media con el cargo de Coordinador HSEQ. Posee varias competencias requeridas pero requiere desarrollo en áreas específicas. Se recomienda capacitación técnica y acompañamiento en los primeros meses.';
+        analisis.recomendacion = 'APTO CON DESARROLLO. El perfil muestra compatibilidad media con el cargo de Analista SIG. Posee varias competencias requeridas pero requiere desarrollo en áreas específicas. Se recomienda capacitación técnica y acompañamiento en los primeros meses.';
     } else if (promedioGeneral >= 40) {
         analisis.recomendacion = 'REQUIERE EVALUACIÓN ADICIONAL. El perfil muestra algunas fortalezas pero brechas significativas con los requisitos del cargo HSEQ. Se recomienda entrevista conductual profunda y validación de competencias técnicas.';
     } else {
-        analisis.recomendacion = 'NO RECOMENDADO para este cargo. El perfil DISC no muestra la compatibilidad necesaria con los requisitos del puesto de Coordinador HSEQ. Se sugiere evaluar al candidato para otras posiciones que se ajusten mejor a su perfil comportamental.';
+        analisis.recomendacion = 'NO RECOMENDADO para este cargo. El perfil DISC no muestra la compatibilidad necesaria con los requisitos del puesto de Analista SIG. Se sugiere evaluar al candidato para otras posiciones que se ajusten mejor a su perfil comportamental.';
     }
     
     return analisis;

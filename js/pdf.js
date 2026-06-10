@@ -1,7 +1,7 @@
 function generarPDF(resultado) {
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
-    const CARGO = 'Coordinador HSEQ';
+    const CARGO = 'Analista SIG';
     const analisis = resultado.analisis || {};
     const percentiles = analisis.percentiles || { D:0, I:0, S:0, C:0 };
     const compatibilidad = analisis.compatibilidad || {};
@@ -316,7 +316,7 @@ function getRecomendaciones(analisis) {
     if ((c.capacitacionSST || 0) < 65) recs.push('Desarrollo de habilidades como facilitador en capacitaciones y charlas de seguridad.');
     if (recs.length === 0) {
         recs.push('Mantener las buenas prácticas identificadas en la evaluación conductual HSEQ.');
-        recs.push('Realizar seguimiento periódico del desempeño en el cargo de Coordinador HSEQ.');
+        recs.push('Realizar seguimiento periódico del desempeño en el cargo de Analista SIG.');
         recs.push('Explorar roles de mayor responsabilidad en gestión HSEQ aprovechando el perfil comportamental sólido.');
     }
     return recs.slice(0, 6);
@@ -416,7 +416,7 @@ function mostrarResultado(resultado) {
             <div>
                 <h3>DRAGADOS MAR Y TER · MARYTER S.A.S</h3>
                 <p>Informe de Evaluación Comportamental DISC<br>
-                    <strong>Cargo evaluado:</strong> Coordinador HSEQ</p>
+                    <strong>Cargo evaluado:</strong> Analista SIG</p>
             </div>
         </div>
 
@@ -433,7 +433,7 @@ function mostrarResultado(resultado) {
             <div class="dato"><strong>Cédula:</strong> ${resultado.cedula || 'No disponible'}</div>
             <div class="dato"><strong>Correo:</strong> ${resultado.email || 'No registrado'}</div>
             <div class="dato"><strong>Fecha de evaluación:</strong> ${fecha}</div>
-                <div class="dato"><strong>Cargo:</strong> Coordinador HSEQ</div>
+                <div class="dato"><strong>Cargo:</strong> Analista SIG</div>
             <div class="dato"><strong>Perfil DISC:</strong> ${perfilNombre}</div>
         </div>
 
@@ -473,7 +473,7 @@ function mostrarResultado(resultado) {
             }).join('')}
         </div>
 
-        <h6 class="section-title">Compatibilidad con el Cargo: Coordinador HSEQ</h6>
+        <h6 class="section-title">Compatibilidad con el Cargo: Analista SIG</h6>
         <div class="table-responsive mb-4">
             <table class="table table-bordered table-sm compat-table">
                 <thead>
@@ -634,7 +634,7 @@ function generarPDFCompleto(discResult, tecResult) {
     doc.setFontSize(13); doc.setFont('helvetica', 'bold');
     doc.text('INFORME DE EVALUACION COMPORTAMENTAL DISC', 105, y, { align: 'center' }); y += 6;
     doc.setFontSize(10); doc.setFont('helvetica', 'normal');
-    doc.text('Cargo evaluado: Coordinador HSEQ', 105, y, { align: 'center' }); y += 6;
+    doc.text('Cargo evaluado: Analista SIG', 105, y, { align: 'center' }); y += 6;
     doc.line(15, y, 195, y); y += 8;
 
     // Candidate data
@@ -656,7 +656,7 @@ function generarPDFCompleto(discResult, tecResult) {
     
     doc.text('Nombre: ' + nombre, 15, y); doc.text('Cedula: ' + cedula, 110, y); y += 5;
     doc.text('Correo: ' + email, 15, y); doc.text('Fecha: ' + fecha, 110, y); y += 5;
-    doc.text('Cargo evaluado: Coordinador HSEQ', 15, y);
+    doc.text('Cargo evaluado: Analista SIG', 15, y);
     doc.text('Perfil DISC: ' + perfilNombre, 110, y); y += 8;
 
     // DISC Scores
