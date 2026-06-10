@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Limpiar Datos - MARYTER</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/dexie.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="card" style="max-width: 500px; margin: 50px auto;">
+            <div class="logo-container">
+                <img src="Sin-titulo-1.png" alt="MARYTER" style="max-width: 150px;">
+            </div>
+            
+            <h2 style="text-align: center; color: #1a3a5c;">Limpiar Datos</h2>
+            <p style="text-align: center; color: #666;">
+                Borra todos los datos de pruebas anteriores para empezar de nuevo con la prueba DISC.
+            </p>
+            
+            <div id="info" class="alert alert-info" style="display: none;">
+                <p>Registros encontrados:</p>
+                <ul>
+                    <li>Candidatos: <span id="contador-candidatos">0</span></li>
+                    <li>Resultados: <span id="contador-resultados">0</span></li>
+                </ul>
+            </div>
+            
+            <div id="mensaje" class="alert" style="display: none;"></div>
+            
+            <button class="btn btn-warning btn-block mb-3" onclick="contarDatos()">
+                Ver datos actuales
+            </button>
+            
+            <button class="btn btn-danger btn-block" onclick="borrarDatos()">
+                BORRAR TODOS LOS DATOS
+            </button>
+            
+            <div class="text-center mt-4">
+                <a href="index.html" class="btn btn-primary">
+                    Volver al Inicio
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/db.js"></script>
+    
+    <script>
+        var db;
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            db = await initDB();
+        });
+        
+        async function contarDatos() {
+            try {
+                const conteo = await contarRegistros();
+                document.getElementById('contador-candidatos').textContent = conteo.candidatos;
+                document.getElementById('contador-resultados').textContent = conteo.resultados;
+                document.getElementById('info').style.display = 'block';
+                
+                if (conteo.candidatos === 0 && conteo.resultados === 0) {
+                    mostrarMensaje('No hay datos para borrar.', 'info');
+                }
+            } catch (e) {
+                console.error('Error:', e);
+                mostrarMensaje('Error al contar datos: ' + e.message, 'danger');
+            }
+        }
+        
+        async function borrarDatos() {
+            if (!confirm('¿Estás seguro de que quieres BORRAR TODOS los datos?\n\nEsta acción no se puede deshacer.')) {
+                return;
+            }
+            
+            try {
+                await borrarTodosLosDatos();
+                mostrarMensaje('¡Datos eliminados correctamente!\nAhora puedes hacer una prueba DISC nueva.', 'success');
+                document.getElementById('info').style.display = 'none';
+            } catch (e) {
+                console.error('Error:', e);
+                mostrarMensaje('Error al borrar datos: ' + e.message, 'danger');
+            }
+        }
+        
+        function mostrarMensaje(texto, tipo) {
+            const div = document.getElementById('mensaje');
+            div.style.display = 'block';
+            div.className = 'alert alert-' + tipo;
+            div.innerHTML = texto.replace(/\n/g, '<br>');
+        }
+    </script>
+</body>
+</html>

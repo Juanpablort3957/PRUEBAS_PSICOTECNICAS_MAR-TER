@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Evaluador - MARYTER</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/dexie.min.js"></script>
+    <script src="js/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div id="login-panel" class="card">
+            <div class="logo-container">
+                <img src="Sin-titulo-1.png" alt="MARYTER">
+            </div>
+            <h1>Panel del Evaluador</h1>
+            
+            <div class="mb-3">
+                <label class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="password" placeholder="Ingrese la contraseña">
+            </div>
+            
+            <button class="btn btn-primary btn-block" onclick="verificarPassword()">Ingresar</button>
+        </div>
+        
+        <div id="panel-contenido" style="display: none;">
+            <div class="panel-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h2>Panel del Evaluador</h2>
+                        <p>MARYTER S.A.S - Gestión de Resultados</p>
+                    </div>
+                    <div>
+                        <button class="btn btn-light" onclick="cambiarPassword()">Cambiar Contraseña</button>
+                        <button class="btn btn-outline-light" onclick="cerrarSesion()">Cerrar Sesión</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <h3 id="total-candidatos">0</h3>
+                        <p>Total Evaluados</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <h3 id="completados">0</h3>
+                        <p>Completados</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <h3 id="pendientes">0</h3>
+                        <p>Pendientes</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-body d-flex align-items-center gap-3 flex-wrap">
+                    <label class="fw-bold" style="white-space:nowrap;">URL del sitio:</label>
+                    <input type="url" class="form-control" id="base-url" style="max-width:400px;font-size:0.85rem;"
+                           placeholder="https://tusitio.netlify.app"
+                           value="https://tusitio.netlify.app">
+                    <small class="text-muted">Link que envías al candidato: <span id="preview-link" style="font-weight:600;color:#1a3a5c;">—</span></small>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="guardarBaseUrl()" title="Guardar URL">💾</button>
+                    <button class="btn btn-outline-success btn-sm" onclick="enviarLinkSeleccionado()" id="btn-enviar-link" disabled title="Enviar link por email al candidato seleccionado">✉ Enviar Link</button>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>Lista de Candidatos</h4>
+                    <div class="d-flex gap-2">
+                        <input type="date" class="form-control" id="filtro-fecha" onchange="filtrarPorFecha()">
+                        <button class="btn btn-secondary" onclick="cargarDatos()">Actualizar</button>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Cédula</th>
+                                <th>Nombre</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="candidatos-lista">
+                            <tr>
+                                <td colspan="5" class="text-center">Cargando...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="modal-container"></div>
+    
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/emailjs.min.js"></script>
+    <script src="js/db.js"></script>
+    <script src="js/preguntas.js"></script>
+    <script src="js/panel.js"></script>
+    <script src="js/pdf.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            await initDB();
+            
+            const savedUrl = sessionStorage.getItem('base_url');
+            const urlInput = document.getElementById('base-url');
+            if (savedUrl && urlInput) urlInput.value = savedUrl;
+            if (urlInput) {
+                urlInput.addEventListener('input', () => {
+                    sessionStorage.setItem('base_url', urlInput.value.trim());
+                });
+            }
+            
+            const password = sessionStorage.getItem('evaluador_password');
+            if (password) {
+                const valido = await verificarPassword(password);
+                if (valido) {
+                    mostrarPanel();
+                }
+            }
+        });
+        
+        async function verificarPassword() {
+            const password = document.getElementById('password').value;
+            
+            if (!password) {
+                alert('Por favor ingrese la contraseña');
+                return;
+            }
+            
+            const valido = await verificarPassword(password);
+            
+            if (valido) {
+                sessionStorage.setItem('evaluador_password', password);
+                mostrarPanel();
+            } else {
+                alert('Contraseña incorrecta');
+            }
+        }
+        
+        async function mostrarPanel() {
+            document.getElementById('login-panel').style.display = 'none';
+            document.getElementById('panel-contenido').style.display = 'block';
+            await cargarDatos();
+        }
+        
+        function cerrarSesion() {
+            sessionStorage.removeItem('evaluador_password');
+            window.location.reload();
+        }
+    </script>
+</body>
+</html>

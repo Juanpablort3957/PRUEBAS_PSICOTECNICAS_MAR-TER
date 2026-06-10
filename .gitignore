@@ -1,0 +1,12 @@
+# OS files
+Thumbs.db
+.DS_Store
+*.log
+
+# Temporary files
+node_modules/
+dist/
+
+# Local env
+.env
+*.local
