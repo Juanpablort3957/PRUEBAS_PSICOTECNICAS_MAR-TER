@@ -316,7 +316,7 @@ function filtrarPorFecha() {
     });
 }
 
-async function verificarPassword(password) {
+async function _verificarPasswordDB(password) {
     return await window.db.config.get('password').then(config => {
         return config && config.value === password;
     });
