@@ -1,13 +1,5 @@
 // ─── Configuración EmailJS ─────────────────────────────────────────────────
-// Tu esposa debe:
-// 1. Crear cuenta gratis en https://www.emailjs.com
-// 2. Ir a Email Services → Add New Service → conectar Outlook
-// 3. Ir a Email Templates → Create New Template → crear plantilla con variables:
-//    {{nombre}}, {{cedula}}, {{fecha}}, {{perfil}}, {{veredicto}}, {{compatibilidad}},
-//    {{puntajeD}}, {{puntajeI}}, {{puntajeS}}, {{puntajeC}},
-//    {{fortalezas}}, {{areasDesarrollo}}, {{linkResultados}}
-// 4. Ir a Account → API Keys → copiar Public Key
-// 5. Reemplazar los valores abajo
+// Mantenimiento: misma config que Analista SIG
 
 const EMAILJS_CONFIG = {
     PUBLIC_KEY: 'kkCv8TWTJtrpN4ueQ',
@@ -33,7 +25,7 @@ async function iniciarPrueba(cedula) {
     const candidato = await obtenerCandidato(cedula);
     if (!candidato) {
         alert('Candidato no encontrado');
-        window.location.href = 'index.html';
+        window.location.href = 'index_mantenimiento.html';
         return;
     }
 
@@ -43,7 +35,7 @@ async function iniciarPrueba(cedula) {
 
     const resultados = await obtenerResultados(cedula);
     if (resultados && resultados.completada) {
-        window.location.href = 'resultados.html?cedula=' + cedula;
+        window.location.href = 'resultados_mantenimiento.html?cedula=' + cedula;
         return;
     }
 
@@ -210,8 +202,6 @@ function seleccionarRespuesta(opcion) {
 }
 
 function seleccionarRespuestaTecnica(opcion) {
-    if (respuestasTecnicas.respuestas[indicePregunta] !== undefined && respuestasTecnicas.respuestas[indicePregunta] >= 0) return;
-
     respuestasTecnicas.respuestas[indicePregunta] = opcion;
     clearInterval(timerInterval);
 
@@ -423,8 +413,8 @@ async function enviarResultadosPorEmail() {
     }))));
 
     const baseUrl = window.location.protocol === 'file:'
-        ? window.location.href.replace('test.html', 'resultados.html').split('?')[0]
-        : window.location.origin + window.location.pathname.replace('test.html', 'resultados.html');
+        ? window.location.href.replace('test_mantenimiento.html', 'resultados_mantenimiento.html').split('?')[0]
+        : window.location.origin + window.location.pathname.replace('test_mantenimiento.html', 'resultados_mantenimiento.html');
     const linkResultados = baseUrl + '?cedula=' + encodeURIComponent(cedulaActual) + '&data=' + encodeURIComponent(dataEncoded);
 
     const params = {
@@ -451,9 +441,6 @@ async function enviarResultadosPorEmail() {
     };
 
     console.log('DEBUG: Enviando email con params:', JSON.stringify(params, null, 2));
-    console.log('DEBUG: Service ID:', EMAILJS_CONFIG.SERVICE_ID);
-    console.log('DEBUG: Template ID:', EMAILJS_CONFIG.TEMPLATE_ID);
-    console.log('DEBUG: Link resultados:', linkResultados);
 
     try {
         emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
@@ -464,12 +451,10 @@ async function enviarResultadosPorEmail() {
         );
         console.log('DEBUG: Email enviado exitosamente:', response);
 
-        try { await generarPDFCompleto(respuestasDISC, respuestasTecnicas); } catch (e) { console.warn('Auto PDF:', e); }
-
         const successHtml = `
             <div class="container" style="max-width:600px;margin:100px auto;text-align:center;padding:40px;background:#fff;border-radius:12px;box-shadow:0 2px 16px rgba(0,0,0,0.08);">
                 <img src="Sin-titulo-1.png" alt="MARYTER" id="logo-image" style="max-width:150px;margin-bottom:20px;">
-                <h2 style="color:#1a3a5c;">¡Evaluación Completa!</h2>
+                <h2 style="color:#1a3a5c;">¡Registro Exitoso!</h2>
                 <p style="color:#555;font-size:1.1rem;margin:20px 0;">
                     Gracias por tu participación, <strong>${nombreActual}</strong>.
                 </p>
@@ -477,12 +462,6 @@ async function enviarResultadosPorEmail() {
                     <p style="color:#198754;font-size:1rem;">
                         ✓ Tus respuestas han sido registradas exitosamente.
                     </p>
-                    <p style="color:#555;font-size:0.9rem;">
-                        Se ha descargado automáticamente el informe PDF completo.
-                    </p>
-                    <button onclick="generarPDFCompleto(respuestasDISC, respuestasTecnicas)" class="btn btn-success mt-2" style="padding:10px 30px;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;">
-                        📄 Descargar PDF nuevamente
-                    </button>
                 </div>
                 <p style="color:#888;font-size:0.85rem;">
                     MARYTER S.A.S - Dragados Mar y Ter
@@ -495,25 +474,17 @@ async function enviarResultadosPorEmail() {
         console.error('DEBUG: Status:', error?.status);
         console.error('DEBUG: Text:', error?.text);
 
-        try { await generarPDFCompleto(respuestasDISC, respuestasTecnicas); } catch (e) { console.warn('Auto PDF error:', e); }
-
         document.body.innerHTML = `
             <div class="container" style="max-width:600px;margin:100px auto;text-align:center;padding:40px;background:#fff;border-radius:12px;box-shadow:0 2px 16px rgba(0,0,0,0.08);">
                 <img src="Sin-titulo-1.png" alt="MARYTER" id="logo-image" style="max-width:150px;margin-bottom:20px;">
-                <h2 style="color:#1a3a5c;">¡Evaluación Completa!</h2>
+                <h2 style="color:#1a3a5c;">¡Registro Exitoso!</h2>
                 <p style="color:#555;font-size:1.1rem;margin:20px 0;">
                     Gracias por tu participación, <strong>${nombreActual}</strong>.
                 </p>
-                <div style="background:#fff3cd;border-radius:10px;padding:20px;margin:20px 0;">
-                    <p style="color:#856404;font-size:1rem;">
-                        ⚠️ No se pudo enviar el email, pero tus respuestas están guardadas.
+                <div style="background:#f0fdf4;border-radius:10px;padding:20px;margin:20px 0;">
+                    <p style="color:#198754;font-size:1rem;">
+                        ✓ Tus respuestas han sido registradas exitosamente.
                     </p>
-                    <p style="color:#555;font-size:0.9rem;">
-                        Se ha descargado automáticamente el informe PDF completo.
-                    </p>
-                    <button onclick="generarPDFCompleto(respuestasDISC, respuestasTecnicas)" class="btn btn-success mt-2" style="padding:10px 30px;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;">
-                        📄 Descargar PDF nuevamente
-                    </button>
                 </div>
                 <p style="color:#888;font-size:0.85rem;">
                     MARYTER S.A.S - Dragados Mar y Ter
@@ -546,52 +517,52 @@ function analizarPerfilDISC(puntuaciones) {
     const c = puntuaciones.C;
 
     if (d >= 4 && c >= 4 && s >= 3) {
-        analisis.perfil = 'Líder en Seguridad';
-        analisis.estilo = 'Combina autoridad para hacer cumplir normas con rigor técnico. Ideal para coordinar equipos HSEQ y garantizar cumplimiento normativo en operaciones de alto riesgo.';
+        analisis.perfil = 'Líder Técnico de Planta';
+        analisis.estilo = 'Combina autoridad para liderar equipos de mantenimiento con rigor técnico. Ideal para coordinar cuadrillas y asegurar continuidad operativa.';
     } else if (c >= 4 && s >= 4) {
-        analisis.perfil = 'Inspector Metódico';
-        analisis.estilo = 'Excelente para seguimiento de procedimientos, gestión documental y auditorías. Prioriza precisión y cumplimiento de estándares.';
+        analisis.perfil = 'Planificador Metódico';
+        analisis.estilo = 'Excelente para planificación de mantenimiento, control de inventarios de repuestos y gestión documental. Prioriza la organización y el cumplimiento.';
     } else if (i >= 4 && s >= 4) {
-        analisis.perfil = 'Facilitador HSEQ';
-        analisis.estilo = 'Gran habilidad para capacitar, comunicar riesgos y generar cultura de seguridad. Ideal para trabajo con personal operativo.';
+        analisis.perfil = 'Comunicador Operativo';
+        analisis.estilo = 'Gran habilidad para capacitar técnicos, coordinar con proveedores y facilitar comunicación entre áreas de planta.';
     } else if (d >= 4 && i >= 4 && c >= 3) {
-        analisis.perfil = 'Transformador en Seguridad';
-        analisis.estilo = 'Lidera cambios culturales en seguridad con determinación y persuasión. Ideal para implementar nuevos sistemas de gestión.';
+        analisis.perfil = 'Transformador de Procesos';
+        analisis.estilo = 'Lidera cambios en cultura de mantenimiento con determinación y persuasión. Ideal para implementar TPM y Lean Maintenance.';
     } else if (d >= 3 && i >= 3 && s >= 3 && c >= 3) {
-        analisis.perfil = 'Integral HSEQ';
-        analisis.estilo = 'Perfil versátil y equilibrado. Puede desempeñarse en múltiples frentes del SG-SST con adaptabilidad.';
+        analisis.perfil = 'Integral de Mantenimiento';
+        analisis.estilo = 'Perfil versátil y equilibrado. Puede desempeñarse en múltiples frentes del área de mantenimiento con adaptabilidad.';
     } else if (c >= 4 && d >= 3) {
-        analisis.perfil = 'Técnico Normativo';
-        analisis.estilo = 'Sólido en normativas y capacidad para hacerlas cumplir. Enfoque en legislación, ISO y control documental.';
+        analisis.perfil = 'Técnico Especialista';
+        analisis.estilo = 'Sólido conocimiento técnico de equipos y procedimientos. Enfoque en confiabilidad, análisis de fallas y cumplimiento de estándares.';
     } else if (d >= 4 && s >= 3) {
-        analisis.perfil = 'Operador de Campo';
-        analisis.estilo = 'Cómodo en terreno y trabajo operativo. Toma decisiones rápidas y mantiene constancia en seguimiento.';
+        analisis.perfil = 'Supervisor de Campo';
+        analisis.estilo = 'Cómodo en planta y trabajo operativo. Toma decisiones rápidas durante fallas y mantiene constancia en seguimiento.';
     } else {
-        analisis.perfil = 'Perfil en Desarrollo HSEQ';
-        analisis.estilo = 'No encaja en perfiles típicos HSEQ. Se requiere evaluación adicional.';
+        analisis.perfil = 'Perfil en Desarrollo en Mantenimiento';
+        analisis.estilo = 'No encaja en perfiles típicos de coordinación de mantenimiento. Se requiere evaluación adicional.';
     }
 
-    if (analisis.percentiles.D >= 55) analisis.fortalezas.push('Liderazgo en seguridad y toma de decisiones bajo presión');
-    if (analisis.percentiles.I >= 55) analisis.fortalezas.push('Comunicación efectiva para capacitación y sensibilización en SST');
-    if (analisis.percentiles.S >= 55) analisis.fortalezas.push('Constancia en seguimiento de planes de acción y procesos HSEQ');
-    if (analisis.percentiles.C >= 55) analisis.fortalezas.push('Atención al detalle normativo, gestión documental y cumplimiento legal');
+    if (analisis.percentiles.D >= 55) analisis.fortalezas.push('Liderazgo de equipos técnicos y toma de decisiones bajo presión');
+    if (analisis.percentiles.I >= 55) analisis.fortalezas.push('Comunicación efectiva para coordinar equipos y proveedores');
+    if (analisis.percentiles.S >= 55) analisis.fortalezas.push('Constancia en seguimiento de planes de mantenimiento y órdenes de trabajo');
+    if (analisis.percentiles.C >= 55) analisis.fortalezas.push('Atención al detalle técnico, gestión documental y cumplimiento de estándares');
 
-    if (analisis.percentiles.D < 40) analisis.areasDesarrollo.push('Capacidad de autoridad y firmeza para hacer cumplir normas de seguridad');
-    if (analisis.percentiles.I < 40) analisis.areasDesarrollo.push('Habilidades de comunicación y capacitación en SST');
-    if (analisis.percentiles.S < 40) analisis.areasDesarrollo.push('Constancia en seguimiento y trabajo de campo sostenido');
-    if (analisis.percentiles.C < 40) analisis.areasDesarrollo.push('Rigor documental, cumplimiento normativo y atención a detalles técnicos');
+    if (analisis.percentiles.D < 40) analisis.areasDesarrollo.push('Capacidad de liderazgo y firmeza para dirigir equipos de mantenimiento');
+    if (analisis.percentiles.I < 40) analisis.areasDesarrollo.push('Habilidades de comunicación para coordinar con producción y proveedores');
+    if (analisis.percentiles.S < 40) analisis.areasDesarrollo.push('Constancia en seguimiento de programas de mantenimiento y trabajo de campo');
+    if (analisis.percentiles.C < 40) analisis.areasDesarrollo.push('Rigor técnico, análisis de fallas y cumplimiento de procedimientos');
 
     const requisitos = {
-        conocimientoNormativo: { dims: ['C', 'S'], peso: 1.0 },
-        liderazgoSeguridad: { dims: ['D', 'I'], peso: 1.0 },
-        gestionSST: { dims: ['C', 'S'], peso: 1.0 },
-        comunicacionRiesgos: { dims: ['I', 'S'], peso: 1.0 },
-        investigacionIncidentes: { dims: ['C', 'D'], peso: 0.9 },
-        trabajoCampo: { dims: ['D', 'S'], peso: 0.8 },
-        capacitacionSST: { dims: ['I', 'C'], peso: 0.9 },
-        gestionAmbiental: { dims: ['C', 'S'], peso: 0.9 },
-        auditoriaVerificacion: { dims: ['C', 'D'], peso: 1.0 },
-        cumplimientoLegal: { dims: ['C', 'S'], peso: 1.0 }
+        liderazgoEquipos: { dims: ['D', 'I'], peso: 0.9 },
+        organizacionPlanificacion: { dims: ['C', 'S'], peso: 1.0 },
+        resolucionProblemas: { dims: ['D', 'C'], peso: 0.9 },
+        comunicacionEfectiva: { dims: ['I', 'S'], peso: 0.9 },
+        orientacionResultados: { dims: ['D', 'C'], peso: 1.0 },
+        conocimientoMantenimiento: { dims: ['C', 'D'], peso: 1.0 },
+        seguridadIndustrial: { dims: ['C', 'S'], peso: 0.9 },
+        gestionRepuestos: { dims: ['C', 'S'], peso: 0.8 },
+        mejoraContinua: { dims: ['D', 'C'], peso: 0.8 },
+        supervisionTecnica: { dims: ['D', 'S'], peso: 0.9 }
     };
 
     Object.keys(requisitos).forEach(req => {
@@ -606,13 +577,13 @@ function analizarPerfilDISC(puntuaciones) {
     const promedioGeneral = Object.values(analisis.compatibilidad).reduce((a, b) => a + b, 0) / Object.keys(analisis.compatibilidad).length;
 
     if (promedioGeneral >= 75) {
-        analisis.recomendacion = 'APTO para el cargo de Analista SIG. El perfil DISC muestra alta compatibilidad con los requisitos del puesto. Demuestra competencias para gestionar el SG-SST, liderar en seguridad, comunicar riesgos y garantizar cumplimiento normativo en operaciones de alto riesgo.';
+        analisis.recomendacion = 'APTO para el cargo de Coordinador de Mantenimiento y Logística. El perfil DISC muestra alta compatibilidad con los requisitos del puesto. Demuestra competencias para liderar equipos, planificar mantenimiento y asegurar continuidad operativa.';
     } else if (promedioGeneral >= 55) {
-        analisis.recomendacion = 'APTO CON DESARROLLO. El perfil muestra compatibilidad media con el cargo HSEQ. Se recomienda capacitación técnica y acompañamiento en los primeros meses.';
+        analisis.recomendacion = 'APTO CON DESARROLLO. El perfil muestra compatibilidad media con el cargo de mantenimiento. Se recomienda capacitación técnica y acompañamiento en los primeros meses.';
     } else if (promedioGeneral >= 40) {
-        analisis.recomendacion = 'REQUIERE EVALUACIÓN ADICIONAL. El perfil muestra algunas fortalezas pero brechas significativas para el cargo HSEQ. Se recomienda entrevista conductual profunda.';
+        analisis.recomendacion = 'REQUIERE EVALUACIÓN ADICIONAL. El perfil muestra algunas fortalezas pero brechas significativas para el cargo de mantenimiento. Se recomienda entrevista conductual profunda.';
     } else {
-        analisis.recomendacion = 'NO RECOMENDADO para el cargo de Analista SIG. El perfil DISC no muestra la compatibilidad necesaria.';
+        analisis.recomendacion = 'NO RECOMENDADO para el cargo de Coordinador de Mantenimiento y Logística. El perfil DISC no muestra la compatibilidad necesaria.';
     }
 
     return analisis;

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resultados DISC - MARYTER</title>
+    <title>Resultados - Coordinador de Mantenimiento</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
     <script src="js/dexie.min.js"></script>
@@ -165,7 +165,7 @@
             </div>
         </div>
         <div class="text-center mt-3 mb-5">
-            <a href="index.html" class="btn btn-outline-secondary">← Volver al Inicio</a>
+            <a href="index_mantenimiento.html" class="btn btn-outline-secondary">← Volver al Inicio</a>
         </div>
     </div>
 
@@ -174,51 +174,51 @@
     </div>
 
     <script src="js/db.js"></script>
-    <script src="js/preguntas.js"></script>
-    <script src="js/pdf.js"></script>
+    <script src="js/preguntas_mantenimiento.js"></script>
+    <script src="js/pdf_mantenimiento.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
 
     <script>
     function getInterpretacionD(p) {
-        if (p >= 80) return 'Perfil con alta autoridad para hacer cumplir normas de seguridad. Toma decisiones rápidas en emergencias y lidera con firmeza en operaciones de alto riesgo. Ideal para detener trabajos inseguros y coordinar respuesta ante incidentes.';
-        if (p >= 60) return 'Buen liderazgo en seguridad. Balance entre firmeza normativa y consideración del personal operativo. Adecuado para investigaciones de incidentes y gestión de permisos de trabajo.';
-        if (p >= 40) return 'Enfoque moderado en autoridad. Puede requerir apoyo para imponer medidas disciplinarias en seguridad. Se beneficia de respaldo gerencial en situaciones conflictivas.';
-        return 'Perfil que prefiere evitar confrontaciones por incumplimientos de seguridad. Puede mostrarse indeciso al detener actividades de alto riesgo. Requiere desarrollo en asertividad y liderazgo normativo.';
+        if (p >= 80) return 'Perfil con alta autoridad para liderar equipos de mantenimiento. Toma decisiones rápidas durante fallas críticas y coordina con firmeza bajo presión operativa. Ideal para gestionar paradas de planta y dirigir cuadrillas técnicas.';
+        if (p >= 60) return 'Buen liderazgo en equipos de mantenimiento. Balance entre firmeza técnica y consideración del personal a cargo. Adecuado para coordinar órdenes de trabajo y gestionar prioridades.';
+        if (p >= 40) return 'Enfoque moderado en liderazgo. Puede requerir apoyo para imponer disciplina técnica en el equipo de mantenimiento. Se beneficia de respaldo gerencial en situaciones de alta presión.';
+        return 'Perfil que prefiere evitar confrontaciones directas con el equipo técnico. Puede mostrarse indeciso al priorizar trabajos urgentes. Requiere desarrollo en asertividad y liderazgo de equipos de planta.';
     }
     function getInterpretacionI(p) {
-        if (p >= 80) return 'Excelente comunicador para capacitaciones y sensibilización en SST. Capacidad para persuadir y generar cultura de seguridad en equipos operativos. Ideal para coordinar programas de formación y reuniones HSEQ.';
-        if (p >= 60) return 'Buena capacidad de comunicación en temas HSEQ. Se relaciona adecuadamente con supervisores y personal de campo. Adecuado para realizar inducciones y charlas de seguridad.';
-        if (p >= 40) return 'Comunicación funcional pero no su principal fortaleza. Puede preferir la documentación técnica sobre la interacción directa con equipos. Se recomienda apoyarlo en actividades de capacitación masiva.';
-        return 'Perfil reservado en comunicación. Prefiere trabajar con normativas, informes y análisis. Puede requerir apoyo en actividades que exijan liderazgo de grupos y sensibilización en seguridad.';
+        if (p >= 80) return 'Excelente comunicador para coordinar con producción, proveedores y áreas internas. Capacidad para capacitar técnicos e influir positivamente en la cultura de mantenimiento. Ideal para roles que requieren negociación con contratistas.';
+        if (p >= 60) return 'Buena capacidad de comunicación en entorno industrial. Se relaciona adecuadamente con proveedores y personal de otras áreas. Adecuado para realizar reuniones de planificación y reportes de gestión.';
+        if (p >= 40) return 'Comunicación funcional pero no su principal fortaleza. Puede preferir el análisis técnico sobre la interacción con múltiples áreas. Se recomienda apoyarlo en presentaciones y negociaciones con proveedores.';
+        return 'Perfil reservado en comunicación interpersonal. Prefiere trabajar con datos técnicos y procedimientos. Puede requerir apoyo en actividades que exijan coordinación interdepartamental y manejo de proveedores.';
     }
     function getInterpretacionS(p) {
-        if (p >= 80) return 'Alta constancia y compromiso sostenido con los procesos HSEQ. Ideal para seguimiento de planes de acción, inspecciones recurrentes y trabajo de campo prolongado. Muy confiable en el cumplimiento de rutinas.';
-        if (p >= 60) return 'Buen balance entre estabilidad y adaptabilidad. Comprometido con las tareas asignadas. Adecuado para trabajos que requieren tanto constancia como capacidad de ajuste a condiciones cambiantes.';
-        if (p >= 40) return 'Estabilidad moderada. Puede mostrar impaciencia con seguimientos muy repetitivos. Requiere variedad de tareas para mantener su motivación en el rol HSEQ.';
-        return 'Alta adaptabilidad al cambio. Prefiere diversidad de frentes de trabajo. Puede aburrirse con inspecciones rutinarias. Se adapta mejor a entornos dinámicos y roles de respuesta a emergencias.';
+        if (p >= 80) return 'Alta constancia y compromiso con los programas de mantenimiento. Ideal para seguimiento de planes preventivos, inspecciones recurrentes y trabajo continuo en piso de planta. Muy confiable en la ejecución de rutinas de mantenimiento.';
+        if (p >= 60) return 'Buen balance entre constancia y adaptabilidad. Comprometido con los programas de mantenimiento. Adecuado para entornos que requieren tanto seguimiento de rutinas como respuesta a imprevistos.';
+        if (p >= 40) return 'Estabilidad moderada. Puede mostrar impaciencia con seguimientos muy repetitivos de órdenes de trabajo. Requiere variedad de tareas para mantener su motivación en el rol de coordinación.';
+        return 'Alta adaptabilidad al cambio. Prefiere diversidad de frentes de trabajo y responde bien a emergencias. Puede encontrar monótonas las rutinas de mantenimiento preventivo. Se adapta mejor a entornos dinámicos con variedad de equipos.';
     }
     function getInterpretacionC(p) {
-        if (p >= 80) return 'Enfoque excepcional en cumplimiento normativo y calidad. Seguimiento riguroso de estándares ISO, legislación SST y gestión documental. Ideal para auditorías, control de registros y verificación de requisitos legales.';
-        if (p >= 60) return 'Buen equilibrio entre rigor normativo y eficiencia operativa. Sigue procedimientos correctamente. Adecuado para identificación de peligros, valoración de riesgos y control documental.';
-        if (p >= 40) return 'Atención a detalles normativos funcional. Puede pasar por alto requisitos legales menores. Se beneficia de listas de verificación y formatos estandarizados para asegurar cumplimiento.';
-        return 'Enfoque en visión general más que en detalles normativos. Puede requerir supervisión en gestión documental y verificación de cumplimiento legal. Se recomienda apoyo administrativo para registros HSEQ.';
+        if (p >= 80) return 'Enfoque excepcional en cumplimiento de estándares técnicos y procedimientos de mantenimiento. Seguimiento riguroso de planes, análisis de fallas y gestión documental. Ideal para control de inventarios de repuestos, reportes de confiabilidad y cumplimiento normativo.';
+        if (p >= 60) return 'Buen equilibrio entre rigor técnico y eficiencia operativa. Sigue procedimientos de mantenimiento correctamente. Adecuado para análisis de fallas, planificación de mantenimiento y gestión de documentación técnica.';
+        if (p >= 40) return 'Atención a detalles técnicos funcional. Puede pasar por alto algunos requisitos de documentación de mantenimiento. Se beneficia de listas de verificación y formatos estandarizados para asegurar cumplimiento.';
+        return 'Enfoque en visión general más que en detalles técnicos de mantenimiento. Puede requerir supervisión en gestión documental y análisis de fallas. Se recomienda apoyo en registros de mantenimiento y control de repuestos.';
     }
 
     function getRecomendaciones(analisis) {
         const recs = [];
         const p = analisis?.percentiles || {};
         const c = analisis?.compatibilidad || {};
-        if (p.D < 55) recs.push('Fortalecer el liderazgo en seguridad para hacer cumplir normas y detener trabajos inseguros con firmeza.');
-        if (p.I < 55) recs.push('Capacitación en comunicación asertiva y técnicas de sensibilización para programas de SST.');
-        if (p.S < 55) recs.push('Desarrollar constancia en seguimiento de planes de acción y trabajo de campo sostenido en zonas operativas.');
-        if (p.C < 55) recs.push('Fortalecer el rigor documental, conocimiento normativo y atención al detalle en informes HSEQ.');
-        if ((c.conocimientoNormativo || 0) < 65) recs.push('Formación en legislación SST colombiana (Decreto 1072, Resolución 0312) y normas ISO.');
-        if ((c.investigacionIncidentes || 0) < 65) recs.push('Entrenamiento en metodologías de investigación de incidentes y análisis de causalidad.');
-        if ((c.capacitacionSST || 0) < 65) recs.push('Desarrollo de habilidades como facilitador en capacitaciones y charlas de seguridad.');
+        if (p.D < 55) recs.push('Fortalecer el liderazgo de equipos de mantenimiento y la toma de decisiones bajo presión.');
+        if (p.I < 55) recs.push('Capacitación en comunicación asertiva y técnicas de coordinación con proveedores y producción.');
+        if (p.S < 55) recs.push('Desarrollar constancia en seguimiento de planes de mantenimiento y órdenes de trabajo.');
+        if (p.C < 55) recs.push('Fortalecer el rigor técnico, análisis de fallas y documentación de mantenimiento.');
+        if ((c.conocimientoMantenimiento || 0) < 65) recs.push('Formación en técnicas de mantenimiento industrial y gestión de activos (ISO 55000).');
+        if ((c.seguridadIndustrial || 0) < 65) recs.push('Entrenamiento en normativa de seguridad industrial aplicada a tareas de mantenimiento (LOTO, espacios confinados).');
+        if ((c.mejoraContinua || 0) < 65) recs.push('Capacitación en Lean Manufacturing, TPM y herramientas de mejora continua.');
         if (recs.length === 0) {
-            recs.push('Mantener las buenas prácticas identificadas en la evaluación conductual HSEQ.');
-            recs.push('Realizar seguimiento periódico del desempeño en el cargo de Analista SIG.');
-            recs.push('Explorar roles de mayor responsabilidad en gestión HSEQ aprovechando el perfil comportamental sólido.');
+            recs.push('Mantener las buenas prácticas identificadas en la evaluación conductual.');
+            recs.push('Realizar seguimiento periódico del desempeño en el cargo de Coordinador de Mantenimiento.');
+            recs.push('Explorar roles de mayor responsabilidad en gestión de activos y confiabilidad.');
         }
         return recs.slice(0, 6);
     }
@@ -267,16 +267,16 @@
         }
 
         const reqLabels = {
-            conocimientoNormativo: 'Conocimiento Normativo SST',
-            liderazgoSeguridad: 'Liderazgo en Seguridad',
-            gestionSST: 'Gestión del SG-SST',
-            comunicacionRiesgos: 'Comunicación de Riesgos',
-            investigacionIncidentes: 'Investigación de Incidentes',
-            trabajoCampo: 'Trabajo de Campo Operativo',
-            capacitacionSST: 'Capacitación en SST',
-            gestionAmbiental: 'Gestión Ambiental',
-            auditoriaVerificacion: 'Auditoría y Verificación',
-            cumplimientoLegal: 'Cumplimiento Legal'
+            liderazgoEquipos: 'Liderazgo de equipos',
+            organizacionPlanificacion: 'Organización y planificación',
+            resolucionProblemas: 'Resolución de problemas bajo presión',
+            comunicacionEfectiva: 'Comunicación efectiva',
+            orientacionResultados: 'Orientación a resultados',
+            conocimientoMantenimiento: 'Conocimiento técnico de mantenimiento',
+            seguridadIndustrial: 'Seguridad industrial',
+            gestionRepuestos: 'Gestión de repuestos e inventarios',
+            mejoraContinua: 'Mejora continua (Lean/TPM)',
+            supervisionTecnica: 'Supervisión técnica'
         };
 
         function evalLabel(p) {
@@ -304,7 +304,7 @@
                 <div>
                     <h3>DRAGADOS MAR Y TER · MARYTER S.A.S</h3>
                      <p>Informe de Evaluación Comportamental DISC<br>
-                        <strong>Cargo evaluado:</strong> Analista SIG</p>
+                        <strong>Cargo evaluado:</strong> Coordinador de Mantenimiento y Logística</p>
                 </div>
             </div>
 
@@ -321,7 +321,7 @@
                 <div class="dato"><strong>Cédula:</strong> ${resultado.cedula || 'No disponible'}</div>
                 <div class="dato"><strong>Correo:</strong> ${resultado.email || 'No registrado'}</div>
                 <div class="dato"><strong>Fecha de evaluación:</strong> ${fecha}</div>
-                <div class="dato"><strong>Cargo:</strong> Analista SIG</div>
+                <div class="dato"><strong>Cargo:</strong> Coordinador de Mantenimiento y Logística</div>
                 <div class="dato"><strong>Perfil DISC:</strong> ${perfilNombre}</div>
             </div>
 
@@ -361,7 +361,7 @@
                 }).join('')}
             </div>
 
-            <h6 class="section-title">Compatibilidad con el Cargo: Analista SIG</h6>
+            <h6 class="section-title">Compatibilidad con el Cargo: Coordinador de Mantenimiento y Logística</h6>
             <div class="table-responsive mb-4">
                 <table class="table table-bordered table-sm compat-table">
                     <thead>
@@ -442,14 +442,13 @@
                 </button>
             </div>`;
 
-        // After DISC button, add technical results
         if (resultado.tecnico && resultado.tecnico.analisis) {
             const ta = resultado.tecnico.analisis;
             const tVClass = ta.porcentaje >= 70 ? 'bg-success' : ta.porcentaje >= 50 ? 'bg-warning text-dark' : 'bg-danger';
 
             html += `
             <div style="margin-top:32px;padding-top:20px;border-top:2px solid #e5e7eb;">
-                <h6 class="section-title">Resultados Evaluación Técnica SIG</h6>
+                <h6 class="section-title">Resultados Evaluación Técnica de Mantenimiento</h6>
                 <div class="text-center mb-4">
                     <span class="badge badge-veredicto ${tVClass}">${ta.veredicto}</span>
                     <div class="mt-2 text-muted" style="font-size:0.82rem;">
@@ -514,7 +513,13 @@
         if (!cedula) {
             document.getElementById('resultado-container').innerHTML =
                 '<div class="alert alert-warning">No se proporcionó número de cédula. ' +
-                '<a href="index.html">Volver al inicio</a></div>';
+                '<a href="index_mantenimiento.html">Volver al inicio</a></div>';
+            return;
+        }
+
+        if (!dataEncoded) {
+            document.getElementById('resultado-container').innerHTML =
+                '<div class="alert alert-danger">Acceso no autorizado. Los resultados solo están disponibles para el evaluador.</div>';
             return;
         }
 
@@ -541,7 +546,7 @@
         if (!resultado) {
             document.getElementById('resultado-container').innerHTML =
                 '<div class="alert alert-danger">No se encontraron resultados para la cédula ' + cedula + '. ' +
-                '<a href="index.html">Volver al inicio</a></div>';
+                '<a href="index_mantenimiento.html">Volver al inicio</a></div>';
             return;
         }
 

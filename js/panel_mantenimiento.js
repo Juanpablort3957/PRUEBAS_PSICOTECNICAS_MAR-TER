@@ -98,7 +98,7 @@ async function verDetalle(cedula) {
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Detalle del Candidato - Perfil DISC</h5>
+                        <h5 class="modal-title">Detalle del Candidato - Coordinador de Mantenimiento</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
@@ -152,7 +152,7 @@ async function verDetalle(cedula) {
                         
                         <div class="card mb-3">
                             <div class="card-body">
-                                <h6>Compatibilidad con el Cargo</h6>
+                                <h6>Compatibilidad con el Cargo: Coordinador de Mantenimiento</h6>
                                 <table class="table table-sm">
                                     <thead>
                                         <tr>
@@ -170,16 +170,16 @@ async function verDetalle(cedula) {
                                             else if (percentil < 40) { evalText = 'Insuficiente'; evalClass = 'text-danger'; }
                                             
                                             const reqLabel = {
-                                                conocimientoNormativo: 'Conocimiento Normativo SST',
-                                                liderazgoSeguridad: 'Liderazgo en Seguridad',
-                                                gestionSST: 'Gestión SG-SST',
-                                                comunicacionRiesgos: 'Comunicación de Riesgos',
-                                                investigacionIncidentes: 'Investigación de Incidentes',
-                                                trabajoCampo: 'Trabajo de Campo',
-                                                capacitacionSST: 'Capacitación en SST',
-                                                gestionAmbiental: 'Gestión Ambiental',
-                                                auditoriaVerificacion: 'Auditoría y Verificación',
-                                                cumplimientoLegal: 'Cumplimiento Legal'
+                                                liderazgoEquipos: 'Liderazgo de equipos',
+                                                organizacionPlanificacion: 'Organización y planificación',
+                                                resolucionProblemas: 'Resolución de problemas bajo presión',
+                                                comunicacionEfectiva: 'Comunicación efectiva',
+                                                orientacionResultados: 'Orientación a resultados',
+                                                conocimientoMantenimiento: 'Conocimiento técnico de mantenimiento',
+                                                seguridadIndustrial: 'Seguridad industrial',
+                                                gestionRepuestos: 'Gestión de repuestos e inventarios',
+                                                mejoraContinua: 'Mejora continua (Lean/TPM)',
+                                                supervisionTecnica: 'Supervisión técnica'
                                             }[req] || req;
                                             
                                             return `
@@ -206,7 +206,7 @@ async function verDetalle(cedula) {
                             </div>
                             <div class="col-md-6">
                                 <div class="analisis-card debilidades">
-                                    <h6>Areas de Desarrollo</h6>
+                                    <h6>Áreas de Desarrollo</h6>
                                     <ul>
                                         ${(resultado.analisis?.areasDesarrollo || []).map(d => `<li>${d}</li>`).join('') || '<li>No identificadas</li>'}
                                     </ul>
@@ -259,14 +259,18 @@ async function descargarPDF(cedula) {
     }
 }
 
-async function cambiarPassword() {
-    const nuevoPassword = prompt('Ingrese la nueva contraseña:');
-    if (nuevoPassword && nuevoPassword.length >= 4) {
-        await cambiarPassword(nuevoPassword);
+async function _cambiarPasswordPanel() {
+    const nuevaPassword = prompt('Ingrese la nueva contraseña:');
+    if (nuevaPassword && nuevaPassword.length >= 4) {
+        await cambiarPassword(nuevaPassword);
         alert('Contraseña actualizada correctamente');
-    } else if (nuevoPassword) {
+    } else if (nuevaPassword) {
         alert('La contraseña debe tener al menos 4 caracteres');
     }
+}
+
+async function _verificarPasswordDB(password) {
+    return await verificarPassword(password);
 }
 
 function filtrarPorFecha() {
@@ -295,123 +299,101 @@ function filtrarPorFecha() {
         const candidato = candidatosData.find(c => c.cedula === resultado.cedula);
         const nombre = candidato ? candidato.nombre : resultado.nombre || 'Desconocido';
         const fecha = new Date(resultado.fecha).toLocaleDateString('es-CO');
-        const estado = resultado.completada ? 
-            '<span class="badge bg-success">Completado</span>' : 
-            '<span class="badge bg-warning">Pendiente</span>';
+        
+        let estadoBadge = '';
+        if (resultado.analisis && resultado.analisis.compatibilidad) {
+            const promedioGeneral = Object.values(resultado.analisis.compatibilidad).reduce((a, b) => a + b, 0) / Object.keys(resultado.analisis.compatibilidad).length;
+            if (promedioGeneral >= 75) estadoBadge = '<span class="badge bg-success">APTO</span>';
+            else if (promedioGeneral >= 55) estadoBadge = '<span class="badge bg-info">APTO C/DESARROLLO</span>';
+            else if (promedioGeneral >= 40) estadoBadge = '<span class="badge bg-warning">EVALUAR</span>';
+            else estadoBadge = '<span class="badge bg-danger">NO APTO</span>';
+        } else {
+            estadoBadge = '<span class="badge bg-secondary">EN PROCESO</span>';
+        }
         
         tbody.innerHTML += `
             <tr onclick="verDetalle('${resultado.cedula}')" style="cursor: pointer;">
                 <td>${resultado.cedula}</td>
                 <td>${nombre}</td>
                 <td>${fecha}</td>
-                <td>${estado}</td>
+                <td>${estadoBadge}</td>
                 <td>
-                    <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); verDetalle('${resultado.cedula}')">
-                        Ver Detalle
-                    </button>
-                    <button class="btn btn-sm btn-success" onclick="event.stopPropagation(); descargarPDF('${resultado.cedula}')">
-                        PDF
-                    </button>
-                    <button class="btn btn-sm btn-info" onclick="event.stopPropagation(); copiarLinkPrueba('${resultado.cedula}', '${nombre}')" title="Copiar link de prueba al portapapeles">
-                        🔗 Link
-                    </button>
+                    <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); verDetalle('${resultado.cedula}')">Ver Detalle</button>
+                    <button class="btn btn-sm btn-success" onclick="event.stopPropagation(); descargarPDF('${resultado.cedula}')">PDF</button>
+                    <button class="btn btn-sm btn-info" onclick="event.stopPropagation(); copiarLinkPrueba('${resultado.cedula}', '${nombre}')">🔗 Link</button>
                 </td>
             </tr>
         `;
     });
 }
 
-async function _verificarPasswordDB(password) {
-    return await window.db.config.get('password').then(config => {
-        return config && config.value === password;
-    });
-}
+let resultadoSeleccionado = null;
 
-async function mostrarPanel() {
-    document.getElementById('login-panel').style.display = 'none';
-    document.getElementById('panel-contenido').style.display = 'block';
-    await cargarDatos();
-}
-
-function cerrarSesion() {
-    sessionStorage.removeItem('evaluador_password');
-    window.location.reload();
-}
-
-function getBaseUrl() {
-    const input = document.getElementById('base-url');
-    if (!input) return '';
-    let url = input.value.trim().replace(/\/+$/, '');
-    sessionStorage.setItem('base_url', url);
-    return url;
+function seleccionarResultado(cedula) {
+    const row = document.querySelectorAll('#candidatos-lista tr');
+    row.forEach(r => r.classList.remove('table-primary'));
+    event.currentTarget.classList.add('table-primary');
+    resultadoSeleccionado = cedula;
+    document.getElementById('btn-enviar-link').disabled = false;
 }
 
 function guardarBaseUrl() {
-    const url = getBaseUrl();
-    alert('URL base guardada: ' + url);
-}
-
-function actualizarPreviewLink(link) {
-    const el = document.getElementById('preview-link');
-    if (el) el.textContent = link || '—';
-}
-
-let cedulaSeleccionada = null;
-
-async function copiarLinkPrueba(cedula, nombre) {
-    const baseUrl = getBaseUrl();
-    if (!baseUrl) {
-        alert('Primero configura la URL del sitio en el campo superior.');
-        document.getElementById('base-url')?.focus();
-        return;
-    }
-    cedulaSeleccionada = cedula;
-    const link = baseUrl + '/test.html?cedula=' + encodeURIComponent(cedula);
-    document.getElementById('btn-enviar-link').disabled = false;
-    try {
-        await navigator.clipboard.writeText(link);
-        actualizarPreviewLink(link);
-        alert('✅ Link copiado al portapapeles para ' + nombre + ':\n' + link + '\n\nPégalo en WhatsApp o email para enviarlo al candidato.');
-    } catch {
-        prompt('Copia este link manualmente para ' + nombre + ':', link);
-        actualizarPreviewLink(link);
-    }
+    const url = document.getElementById('base-url').value.trim();
+    sessionStorage.setItem('base_url', url);
+    alert('URL guardada correctamente');
 }
 
 async function enviarLinkSeleccionado() {
-    if (!cedulaSeleccionada) {
-        alert('Primero haz clic en 🔗 Link de un candidato.');
+    if (!resultadoSeleccionado) {
+        alert('Seleccione primero un candidato de la tabla');
         return;
     }
-    const candidato = await obtenerCandidato(cedulaSeleccionada);
-    if (!candidato || !candidato.email) {
-        alert('El candidato no tiene email registrado. Primero debe registrarse en index.html.');
-        return;
-    }
-    const baseUrl = getBaseUrl();
+    
+    const baseUrl = document.getElementById('base-url').value.trim();
     if (!baseUrl) {
-        alert('Configura la URL del sitio primero.');
+        alert('Ingrese la URL del sitio primero');
         return;
     }
-    const link = baseUrl + '/test.html?cedula=' + encodeURIComponent(cedulaSeleccionada);
-    // Para habilitar el envío automático:
-    // 1. Ir a EmailJS → Email Templates → Create New Template
-    // 2. Usar variables: {{nombre}}, {{cedula}}, {{linkPrueba}}
-    // 3. Copiar el Template ID y reemplazar abajo
-    // 4. Descomentar el código de emailjs.send
-    alert('Para enviar automáticamente:\n1. Crea un template en EmailJS con {{nombre}}, {{cedula}}, {{linkPrueba}}\n2. Copia el Template ID\n3. Descomenta el código en panel.js enviarLinkSeleccionado\n\nPor ahora, el link se copió al portapapeles. Pégalo en WhatsApp.');
-    /*  // --- DESCOMENTAR CUANDO TENGAS EL TEMPLATE ---
-    try {
-        emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
-        await emailjs.send(EMAILJS_CONFIG.SERVICE_ID, 'TU_TEMPLATE_ID', {
-            nombre: candidato.nombre,
-            cedula: cedulaSeleccionada,
-            linkPrueba: link,
-            to_email: candidato.email
-        });
-        alert('✅ Link enviado a ' + candidato.email);
-    } catch (e) {
-        alert('Error al enviar email: ' + e.message);
+    
+    const candidato = await obtenerCandidato(resultadoSeleccionado);
+    if (!candidato || !candidato.email) {
+        alert('El candidato no tiene email registrado');
+        return;
     }
-    */
+    
+    const link = baseUrl.replace(/\/+$/, '') + '/index_mantenimiento.html';
+    
+    try {
+        emailjs.init('kkCv8TWTJtrpN4ueQ');
+        await emailjs.send('service_lf010hld', 'template_6jn95mu', {
+            nombre: candidato.nombre,
+            cedula: resultadoSeleccionado,
+            email_evaluador: 'psic.dayanagomezc@outlook.com',
+            linkResultados: link,
+            perfil: 'Candidato a Coordinador de Mantenimiento',
+            veredicto: 'PENDIENTE',
+            compatibilidad: 'Enlace enviado',
+            puntajeD: 0, puntajeI: 0, puntajeS: 0, puntajeC: 0,
+            fortalezas: 'Realizar prueba psicotécnica',
+            areasDesarrollo: 'N/A',
+            tecnico_puntaje: 0, tecnico_total: 0, tecnico_porcentaje: 0, tecnico_veredicto: ''
+        });
+        alert('Link enviado a ' + candidato.email);
+    } catch (e) {
+        console.error('Error:', e);
+        alert('Error al enviar: ' + (e.message || e));
+    }
+}
+
+function copiarLinkPrueba(cedula, nombre) {
+    const baseUrl = sessionStorage.getItem('base_url') || document.getElementById('base-url')?.value?.trim() || window.location.origin + window.location.pathname.replace('panel_mantenimiento.html', '');
+    const link = baseUrl.replace(/\/+$/, '') + '/index_mantenimiento.html?cedula=' + cedula;
+    
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(link).then(() => {
+            alert('Link copiado al portapapeles para ' + nombre + ':\n' + link);
+        });
+    } else {
+        prompt('Link de mantenimiento para ' + nombre, link);
+    }
 }

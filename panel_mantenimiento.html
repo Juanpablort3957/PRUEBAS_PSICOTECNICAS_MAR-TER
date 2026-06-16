@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Evaluador - MARYTER</title>
+    <title>Panel Evaluador - Coordinador de Mantenimiento</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
     <script src="js/dexie.min.js"></script>
@@ -17,24 +17,25 @@
                 <img src="Sin-titulo-1.png" alt="MARYTER">
             </div>
             <h1>Panel del Evaluador</h1>
+            <h5 style="color:#1a3a5c;">Coordinador de Mantenimiento y Logística</h5>
             
             <div class="mb-3">
                 <label class="form-label">Contraseña</label>
                 <input type="password" class="form-control" id="password" placeholder="Ingrese la contraseña">
             </div>
             
-            <button class="btn btn-primary btn-block" onclick="verificarPassword()">Ingresar</button>
+            <button class="btn btn-primary btn-block" onclick="_loginPanel()">Ingresar</button>
         </div>
         
         <div id="panel-contenido" style="display: none;">
             <div class="panel-header">
                 <div class="d-flex justify-content-between align-items-center">
                     <div>
-                        <h2>Panel del Evaluador</h2>
+                        <h2>Panel del Evaluador - Coordinador de Mantenimiento</h2>
                         <p>MARYTER S.A.S - Gestión de Resultados</p>
                     </div>
                     <div>
-                        <button class="btn btn-light" onclick="cambiarPassword()">Cambiar Contraseña</button>
+                        <button class="btn btn-light" onclick="_cambiarPasswordPanel()">Cambiar Contraseña</button>
                         <button class="btn btn-outline-light" onclick="cerrarSesion()">Cerrar Sesión</button>
                     </div>
                 </div>
@@ -75,7 +76,7 @@
             
             <div class="card">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h4>Lista de Candidatos</h4>
+                    <h4>Lista de Candidatos - Mantenimiento</h4>
                     <div class="d-flex gap-2">
                         <input type="date" class="form-control" id="filtro-fecha" onchange="filtrarPorFecha()">
                         <button class="btn btn-secondary" onclick="cargarDatos()">Actualizar</button>
@@ -109,9 +110,9 @@
     <script src="js/bootstrap.bundle.min.js"></script>
     <script src="js/emailjs.min.js"></script>
     <script src="js/db.js"></script>
-    <script src="js/preguntas.js"></script>
-    <script src="js/panel.js"></script>
-    <script src="js/pdf.js"></script>
+    <script src="js/preguntas_mantenimiento.js"></script>
+    <script src="js/panel_mantenimiento.js"></script>
+    <script src="js/pdf_mantenimiento.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
@@ -135,7 +136,7 @@
             }
         });
         
-        async function verificarPassword() {
+        async function _loginPanel() {
             const password = document.getElementById('password').value;
             
             if (!password) {

@@ -72,7 +72,7 @@ async function _logoData() {
 // ======================== HTML builders ========================
 
 async function _buildDISC(resultado) {
-    var CARGO = 'Analista SIG';
+    var CARGO = 'Coordinador de Mantenimiento y Logística';
     var analisis = resultado.analisis || {};
     var percentiles = analisis.percentiles || { D:0, I:0, S:0, C:0 };
     var compatibilidad = analisis.compatibilidad || {};
@@ -94,16 +94,16 @@ async function _buildDISC(resultado) {
         { key:'C', label:'Conscienciosidad', color:'#0d6efd', bg:'#f0f4ff' }
     ];
     var reqLabels = [
-        { key:'conocimientoNormativo', label:'Conocimiento Normativo SST' },
-        { key:'liderazgoSeguridad', label:'Liderazgo en Seguridad' },
-        { key:'gestionSST', label:'Gesti\u00f3n del SG-SST' },
-        { key:'comunicacionRiesgos', label:'Comunicaci\u00f3n de Riesgos' },
-        { key:'investigacionIncidentes', label:'Investigaci\u00f3n de Incidentes' },
-        { key:'trabajoCampo', label:'Trabajo de Campo Operativo' },
-        { key:'capacitacionSST', label:'Capacitaci\u00f3n en SST' },
-        { key:'gestionAmbiental', label:'Gesti\u00f3n Ambiental' },
-        { key:'auditoriaVerificacion', label:'Auditor\u00eda y Verificaci\u00f3n' },
-        { key:'cumplimientoLegal', label:'Cumplimiento Legal' }
+        { key:'liderazgoEquipos', label:'Liderazgo de equipos' },
+        { key:'organizacionPlanificacion', label:'Organización y planificación' },
+        { key:'resolucionProblemas', label:'Resolución de problemas bajo presión' },
+        { key:'comunicacionEfectiva', label:'Comunicación efectiva' },
+        { key:'orientacionResultados', label:'Orientación a resultados' },
+        { key:'conocimientoMantenimiento', label:'Conocimiento técnico de mantenimiento' },
+        { key:'seguridadIndustrial', label:'Seguridad industrial' },
+        { key:'gestionRepuestos', label:'Gestión de repuestos e inventarios' },
+        { key:'mejoraContinua', label:'Mejora continua (Lean/TPM)' },
+        { key:'supervisionTecnica', label:'Supervisión técnica' }
     ];
     function ec(p) { return p >= 75 ? ['\u00d3ptimo','#198754'] : p >= 55 ? ['Adecuado','#0d6efd'] : p >= 40 ? ['En Desarrollo','#fd7e14'] : ['Insuficiente','#dc3545']; }
     function nc(p) { return p >= 75 ? {c:'#198754',l:'Alto'} : p >= 55 ? {c:'#0d6efd',l:'Medio-Alto'} : p >= 40 ? {c:'#fd7e14',l:'Medio'} : {c:'#6c757d',l:'Bajo'}; }
@@ -213,7 +213,7 @@ function _buildTecnico(ta) {
             + '<td style="font-size:0.85rem;padding:5px 8px;border:1px solid #dee2e6"><div style="height:8px;border-radius:4px;background:#e9ecef"><div style="height:8px;border-radius:4px;width:' + p + '%;background:' + cb + '"></div></div></td></tr>';
     }).join('');
     return '<div style="margin-top:32px;padding-top:20px;border-top:2px solid #e5e7eb">'
-        + '<div style="font-size:1rem;font-weight:700;color:#1a3a5c;border-bottom:2px solid #e5e7eb;padding-bottom:8px;margin-bottom:16px">Resultados Evaluaci\u00f3n T\u00e9cnica SIG</div>'
+        + '<div style="font-size:1rem;font-weight:700;color:#1a3a5c;border-bottom:2px solid #e5e7eb;padding-bottom:8px;margin-bottom:16px">Resultados Evaluaci\u00f3n T\u00e9cnica de Mantenimiento</div>'
         + '<div style="text-align:center;margin-bottom:20px">'
             + '<span style="display:inline-block;font-size:1rem;padding:8px 22px;border-radius:20px;font-weight:700;background:' + tBg + ';color:#fff">' + ta.veredicto + '</span>'
             + '<div style="margin-top:8px;color:#6c757d;font-size:0.82rem">Puntaje: <strong>' + ta.puntaje + '/' + ta.total + '</strong> (' + ta.porcentaje + '%)</div></div>'
@@ -260,48 +260,48 @@ async function generarPDFCompleto(discResult, tecResult) {
 }
 
 function getInterpretacionD(percentil) {
-    if (percentil >= 80) return 'Perfil altamente orientado a resultados. Toma decisiones rápidas y asume el control de situaciones complejas. Ideal para liderar proyectos desafiantes y gestionar múltiples frentes de trabajo simultáneamente.';
-    if (percentil >= 60) return 'Capacidad de liderazgo bien desarrollada. Balance entre toma de decisiones y consideración de alternativas. Adecuado para coordinar proyectos con objetivos ambiciosos y equipos geográficamente dispersos.';
-    if (percentil >= 40) return 'Enfoque moderado hacia resultados. Puede requerir impulso adicional en situaciones de alta presión o urgencia. Se beneficia de entornos que permitan análisis antes de actuar.';
-    return 'Preferencia por trabajar con información detallada antes de tomar decisiones. Puede mostrarse cauteloso ante cambios rápidos. Se recomienda acompañamiento en entornos muy dinámicos.';
+    if (percentil >= 80) return 'Perfil con alta autoridad para liderar equipos de mantenimiento. Toma decisiones rápidas durante fallas críticas y coordina con firmeza bajo presión operativa. Ideal para gestionar paradas de planta y dirigir cuadrillas técnicas.';
+    if (percentil >= 60) return 'Buen liderazgo en equipos de mantenimiento. Balance entre firmeza técnica y consideración del personal. Adecuado para coordinar órdenes de trabajo y gestionar prioridades.';
+    if (percentil >= 40) return 'Enfoque moderado en liderazgo. Puede requerir apoyo para imponer disciplina técnica en el equipo. Se beneficia de respaldo gerencial en situaciones de alta presión.';
+    return 'Perfil que prefiere evitar confrontaciones directas con el equipo técnico. Puede mostrarse indeciso al priorizar trabajos urgentes. Requiere desarrollo en asertividad y liderazgo de equipos de planta.';
 }
 
 function getInterpretacionI(percentil) {
-    if (percentil >= 80) return 'Excelentes habilidades interpersonales. Comunicación efectiva con equipos y stakeholders. Ideal para negociaciones con clientes y motivación de equipos operativos en múltiples zonas.';
-    if (percentil >= 60) return 'Buena capacidad de comunicación. Se relaciona bien con diferentes perfiles. Adecuado para mantener relaciones con clientes y equipos en múltiples ubicaciones geográficas.';
-    if (percentil >= 40) return 'Comunicación funcional pero no su principal fortaleza. Puede preferir trabajar con datos y hechos concretos. Se recomienda enfocarlo en interacción con equipos ya conocidos.';
-    return 'Perfil más reservado en interacción social. Prefiere trabajar con información concreta y estructurada. Puede requerir apoyo en situaciones que exijan networking o comunicación extensiva.';
+    if (percentil >= 80) return 'Excelente comunicador para coordinar con producción, proveedores y áreas internas. Capacidad para capacitar técnicos e influir positivamente en la cultura de mantenimiento. Ideal para negociación con contratistas y reportes a gerencia.';
+    if (percentil >= 60) return 'Buena capacidad de comunicación en entorno industrial. Se relaciona adecuadamente con proveedores y personal de otras áreas. Adecuado para reuniones de planificación y reportes de gestión.';
+    if (percentil >= 40) return 'Comunicación funcional pero no su principal fortaleza. Puede preferir el análisis técnico sobre la interacción con múltiples áreas. Se recomienda apoyarlo en presentaciones y negociaciones con proveedores.';
+    return 'Perfil reservado en comunicación interpersonal. Prefiere trabajar con datos técnicos y procedimientos. Puede requerir apoyo en coordinación interdepartamental y manejo de proveedores.';
 }
 
 function getInterpretacionS(percentil) {
-    if (percentil >= 80) return 'Alta estabilidad y compromiso sostenido. Ideal para proyectos de largo plazo y equipos que requieren consistencia. Muy leal con procedimientos y estándares establecidos.';
-    if (percentil >= 60) return 'Buen balance entre estabilidad y flexibilidad. Comprometido con equipos y tareas asignadas. Puede adaptarse a cambios cuando se explica claramente el objetivo.';
-    if (percentil >= 40) return 'Estabilidad moderada. Puede mostrar impaciencia con cambios muy frecuentes. Requiere entornos con cierta predictibilidad para lograr su máximo rendimiento.';
-    return 'Alta adaptabilidad al cambio. Prefiere variedad en tareas y proyectos nuevos. Puede aburrirse con trabajos rutinarios. Se adapta muy bien a entornos dinámicos y cambiantes.';
+    if (percentil >= 80) return 'Alta constancia y compromiso con los programas de mantenimiento. Ideal para seguimiento de planes preventivos, inspecciones recurrentes y trabajo continuo en piso de planta. Muy confiable en la ejecución de rutinas.';
+    if (percentil >= 60) return 'Buen balance entre constancia y adaptabilidad. Comprometido con los programas de mantenimiento. Adecuado para entornos que requieren tanto seguimiento de rutinas como respuesta a imprevistos.';
+    if (percentil >= 40) return 'Estabilidad moderada. Puede mostrar impaciencia con seguimientos muy repetitivos. Requiere variedad de tareas para mantener su motivación en el rol.';
+    return 'Alta adaptabilidad al cambio. Prefiere diversidad de frentes de trabajo y responde bien a emergencias. Puede encontrar monótonas las rutinas de preventivo. Se adapta mejor a entornos dinámicos.';
 }
 
 function getInterpretacionC(percentil) {
-    if (percentil >= 80) return 'Enfoque excepcional en calidad y precisión. Seguimiento riguroso de procedimientos y estándares normativos. Ideal para velar por cumplimiento contractual y exactitud en informes.';
-    if (percentil >= 60) return 'Buen equilibrio entre calidad y eficiencia operativa. Sigue procedimientos correctamente mientras busca soluciones prácticas. Adecuado para control de calidad en proyectos.';
-    if (percentil >= 40) return 'Atención a detalles funcional. Puede ocasionalmente pasar por alto aspectos críticos. Se beneficia de listas de verificación y procesos de revisión formales.';
-    return 'Enfoque en visión general más que en detalles específicos. Pragmático en búsqueda de soluciones. Puede requerir sistemas de control adicionales para garantizar el cumplimiento normativo.';
+    if (percentil >= 80) return 'Enfoque excepcional en cumplimiento de estándares técnicos y procedimientos de mantenimiento. Seguimiento riguroso de planes, análisis de fallas y gestión documental. Ideal para control de inventarios de repuestos y reportes de confiabilidad.';
+    if (percentil >= 60) return 'Buen equilibrio entre rigor técnico y eficiencia operativa. Sigue procedimientos de mantenimiento correctamente. Adecuado para análisis de fallas, planificación y gestión documental.';
+    if (percentil >= 40) return 'Atención a detalles técnicos funcional. Puede pasar por alto algunos requisitos de documentación. Se beneficia de listas de verificación y formatos estandarizados.';
+    return 'Enfoque en visión general más que en detalles técnicos. Puede requerir supervisión en gestión documental y análisis de fallas. Se recomienda apoyo en registros y control de repuestos.';
 }
 
 function getRecomendaciones(analisis) {
     const recs = [];
     const p = analisis?.percentiles || {};
     const c = analisis?.compatibilidad || {};
-    if (p.D < 55) recs.push('Fortalecer el liderazgo en seguridad para hacer cumplir normas y detener trabajos inseguros con firmeza.');
-    if (p.I < 55) recs.push('Capacitación en comunicación asertiva y técnicas de sensibilización para programas de SST.');
-    if (p.S < 55) recs.push('Desarrollar constancia en seguimiento de planes de acción y trabajo de campo sostenido en zonas operativas.');
-    if (p.C < 55) recs.push('Fortalecer el rigor documental, conocimiento normativo y atención al detalle en informes HSEQ.');
-    if ((c.conocimientoNormativo || 0) < 65) recs.push('Formación en legislación SST colombiana (Decreto 1072, Resolución 0312) y normas ISO.');
-    if ((c.investigacionIncidentes || 0) < 65) recs.push('Entrenamiento en metodologías de investigación de incidentes y análisis de causalidad.');
-    if ((c.capacitacionSST || 0) < 65) recs.push('Desarrollo de habilidades como facilitador en capacitaciones y charlas de seguridad.');
+    if (p.D < 55) recs.push('Fortalecer el liderazgo de equipos de mantenimiento y la toma de decisiones bajo presión.');
+    if (p.I < 55) recs.push('Capacitación en comunicación asertiva y técnicas de coordinación con proveedores y producción.');
+    if (p.S < 55) recs.push('Desarrollar constancia en seguimiento de planes de mantenimiento y órdenes de trabajo.');
+    if (p.C < 55) recs.push('Fortalecer el rigor técnico, análisis de fallas y documentación de mantenimiento.');
+    if ((c.conocimientoMantenimiento || 0) < 65) recs.push('Formación en técnicas de mantenimiento industrial y gestión de activos (ISO 55000).');
+    if ((c.seguridadIndustrial || 0) < 65) recs.push('Entrenamiento en normativa de seguridad industrial aplicada a mantenimiento (LOTO, espacios confinados).');
+    if ((c.mejoraContinua || 0) < 65) recs.push('Capacitación en Lean Manufacturing, TPM y herramientas de mejora continua.');
     if (recs.length === 0) {
-        recs.push('Mantener las buenas prácticas identificadas en la evaluación conductual HSEQ.');
-        recs.push('Realizar seguimiento periódico del desempeño en el cargo de Analista SIG.');
-        recs.push('Explorar roles de mayor responsabilidad en gestión HSEQ aprovechando el perfil comportamental sólido.');
+        recs.push('Mantener las buenas prácticas identificadas en la evaluación conductual.');
+        recs.push('Realizar seguimiento periódico del desempeño en el cargo de Coordinador de Mantenimiento.');
+        recs.push('Explorar roles de mayor responsabilidad en gestión de activos y confiabilidad.');
     }
     return recs.slice(0, 6);
 }
@@ -364,16 +364,16 @@ function mostrarResultado(resultado) {
     }
 
     const reqLabels = {
-        conocimientoNormativo: 'Conocimiento Normativo SST',
-        liderazgoSeguridad: 'Liderazgo en Seguridad',
-        gestionSST: 'Gestión del SG-SST',
-        comunicacionRiesgos: 'Comunicación de Riesgos',
-        investigacionIncidentes: 'Investigación de Incidentes',
-        trabajoCampo: 'Trabajo de Campo Operativo',
-        capacitacionSST: 'Capacitación en SST',
-        gestionAmbiental: 'Gestión Ambiental',
-        auditoriaVerificacion: 'Auditoría y Verificación',
-        cumplimientoLegal: 'Cumplimiento Legal'
+        liderazgoEquipos: 'Liderazgo de equipos',
+        organizacionPlanificacion: 'Organización y planificación',
+        resolucionProblemas: 'Resolución de problemas bajo presión',
+        comunicacionEfectiva: 'Comunicación efectiva',
+        orientacionResultados: 'Orientación a resultados',
+        conocimientoMantenimiento: 'Conocimiento técnico de mantenimiento',
+        seguridadIndustrial: 'Seguridad industrial',
+        gestionRepuestos: 'Gestión de repuestos e inventarios',
+        mejoraContinua: 'Mejora continua (Lean/TPM)',
+        supervisionTecnica: 'Supervisión técnica'
     };
 
     function evalLabel(p) {
@@ -400,7 +400,7 @@ function mostrarResultado(resultado) {
             <div>
                 <h3>DRAGADOS MAR Y TER · MARYTER S.A.S</h3>
                 <p>Informe de Evaluación Comportamental DISC<br>
-                    <strong>Cargo evaluado:</strong> Analista SIG</p>
+                    <strong>Cargo evaluado:</strong> Coordinador de Mantenimiento y Logística</p>
             </div>
         </div>
 
@@ -417,7 +417,7 @@ function mostrarResultado(resultado) {
             <div class="dato"><strong>Cédula:</strong> ${resultado.cedula || 'No disponible'}</div>
             <div class="dato"><strong>Correo:</strong> ${resultado.email || 'No registrado'}</div>
             <div class="dato"><strong>Fecha de evaluación:</strong> ${fecha}</div>
-                <div class="dato"><strong>Cargo:</strong> Analista SIG</div>
+                <div class="dato"><strong>Cargo:</strong> Coordinador de Mantenimiento y Logística</div>
             <div class="dato"><strong>Perfil DISC:</strong> ${perfilNombre}</div>
         </div>
 
@@ -457,7 +457,7 @@ function mostrarResultado(resultado) {
             }).join('')}
         </div>
 
-        <h6 class="section-title">Compatibilidad con el Cargo: Analista SIG</h6>
+        <h6 class="section-title">Compatibilidad con el Cargo: Coordinador de Mantenimiento y Logística</h6>
         <div class="table-responsive mb-4">
             <table class="table table-bordered table-sm compat-table">
                 <thead>
@@ -537,9 +537,9 @@ function mostrarResultado(resultado) {
                 📄 Descargar Informe PDF
             </button>
         </div>
-    </div>`;
+    </div>
+    `;
     
-    // Append technical results if available
     if (resultado.tecnico && resultado.tecnico.analisis) {
         const ta = resultado.tecnico.analisis;
         const tVClass = ta.porcentaje >= 70 ? 'bg-success' : ta.porcentaje >= 50 ? 'bg-warning text-dark' : 'bg-danger';
@@ -548,7 +548,7 @@ function mostrarResultado(resultado) {
         techDiv.className = 'resultado-card';
         techDiv.style.marginTop = '20px';
         techDiv.innerHTML = `
-            <h6 class="section-title">Resultados Evaluación Técnica SIG</h6>
+            <h6 class="section-title">Resultados Evaluación Técnica de Mantenimiento</h6>
             <div class="text-center mb-4">
                 <span class="badge badge-veredicto ${tVClass}">${ta.veredicto}</span>
                 <div class="mt-2 text-muted" style="font-size:0.82rem;">
@@ -559,7 +559,7 @@ function mostrarResultado(resultado) {
                 <table class="table table-bordered table-sm compat-table">
                     <thead>
                         <tr>
-                            <th>Categoria</th>
+                            <th>Categoría</th>
                             <th style="width:80px">Aciertos</th>
                             <th style="width:80px">%</th>
                             <th style="width:150px">Barra</th>
@@ -591,10 +591,13 @@ async function descargarPDFResultado(cedula) {
         let r = await obtenerResultados(cedula);
         if (!r) r = window.resultadoGlobal || null;
         if (!r) { alert('Resultado no encontrado'); return; }
-        await generarPDF(r);
+        if (r.tecnico && r.tecnico.analisis) {
+            await generarPDFCompleto(r, r.tecnico);
+        } else {
+            await generarPDF(r);
+        }
     } catch (e) {
         console.error('Error en descargarPDFResultado:', e);
         alert('Error al descargar PDF: ' + (e.message || e));
     }
 }
-
