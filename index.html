@@ -3,130 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prueba Psicotécnica - MARYTER</title>
+    <title>MARYTER - Pruebas Psicotécnicas</title>
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/styles.css">
-    <script src="js/dexie.min.js"></script>
-    <script src="js/jspdf.umd.min.js"></script>
+    <style>
+        .cargo-card { text-align:center; padding:24px; border-radius:12px; background:#fff; box-shadow:0 2px 12px rgba(0,0,0,0.08); transition:transform 0.2s; cursor:pointer; margin-bottom:20px; }
+        .cargo-card:hover { transform:translateY(-3px); box-shadow:0 6px 24px rgba(0,0,0,0.14); }
+        .cargo-card h4 { color:#1a3a5c; font-weight:700; margin:12px 0 6px; }
+        .cargo-card p { color:#666; font-size:0.9rem; margin:0; }
+        .cargo-icon { font-size:2.5rem; }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="card">
+    <div class="container" style="max-width:700px;">
+        <div class="card text-center">
             <div class="logo-container">
-                <img src="Sin-titulo-1.png" alt="MARYTER">
+                <img src="Sin-titulo-1.png" alt="MARYTER" style="max-width:180px;">
             </div>
+            <h1 style="color:#1a3a5c;font-weight:700;">Pruebas Psicot&eacute;cnicas MARYTER</h1>
+            <p style="color:#666;margin-bottom:30px;">Selecciona el cargo para acceder a la prueba</p>
             
-            <h1>Prueba Psicotécnica</h1>
-            
-            <div id="login-form">
-                <div class="mb-4">
-                    <label class="form-label">Número de Cédula</label>
-                    <input type="text" class="form-control" id="cedula" placeholder="Ingrese su número de cédula" maxlength="15">
-                </div>
-                
-                <div id="datos-candidato" style="display: none;">
-                    <div class="mb-3">
-                        <label class="form-label">Nombre Completo</label>
-                        <input type="text" class="form-control" id="nombre" placeholder="Ingrese su nombre completo">
+            <div>
+                <a href="hseq/" style="text-decoration:none;">
+                    <div class="cargo-card">
+                        <h4>Coordinador HSEQ</h4>
+                        <p>Prueba DISC + Evaluaci&oacute;n T&eacute;cnica en Sistemas Integrados de Gesti&oacute;n</p>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label">Correo Electrónico</label>
-                        <input type="email" class="form-control" id="email" placeholder="Ingrese su correo electrónico">
+                </a>
+                <a href="analista_sig/" style="text-decoration:none;">
+                    <div class="cargo-card">
+                        <h4>Analista SIG</h4>
+                        <p>Prueba DISC + Evaluaci&oacute;n T&eacute;cnica en Seguridad, Salud y Ambiente</p>
                     </div>
-                </div>
-                
-                <div id="mensaje-status" class="alert" style="display: none;"></div>
-                
-                <button class="btn btn-primary btn-block" id="btn-ingresar" onclick="verificarCandidato()">
-                    Ingresar
-                </button>
-            </div>
-            
-            <div id="bienvenida" class="bienvenida" style="display: none;">
-                <h2>Bienvenido, <span id="nombre-usuario"></span></h2>
-                <p>¿Qué desea hacer?</p>
-                <button class="btn btn-primary" onclick="continuarPrueba()">Continuar Prueba</button>
-                <button class="btn btn-success" onclick="verResultados()">Ver Resultados</button>
+                </a>
+                <a href="mantto/" style="text-decoration:none;">
+                    <div class="cargo-card">
+                        <h4>Coordinador de Mantenimiento</h4>
+                        <p>Prueba DISC + Evaluaci&oacute;n T&eacute;cnica en Gesti&oacute;n de Mantenimiento</p>
+                    </div>
+                </a>
             </div>
         </div>
     </div>
-    
     <div class="footer">
         <p>MARYTER S.A.S - Dragados Mar y Ter | Cartagena de Indias, Colombia</p>
     </div>
-    
-    <script src="js/db.js"></script>
-    <script src="js/preguntas.js"></script>
-    <script src="js/test.js"></script>
-    <script src="js/pdf.js"></script>
-    
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            await initDB();
-        });
-        
-        async function verificarCandidato() {
-            const cedula = document.getElementById('cedula').value.trim();
-            
-            if (!cedula) {
-                mostrarMensaje('Por favor ingrese su número de cédula', 'warning');
-                return;
-            }
-            
-            const candidato = await obtenerCandidato(cedula);
-            const resultados = await obtenerResultados(cedula);
-            
-            if (candidato && resultados && resultados.completada) {
-                document.getElementById('nombre-usuario').textContent = candidato.nombre;
-                document.getElementById('login-form').style.display = 'none';
-                document.getElementById('bienvenida').style.display = 'block';
-            } else if (candidato) {
-                window.location.href = 'test.html?cedula=' + cedula;
-            } else {
-                document.getElementById('datos-candidato').style.display = 'block';
-                document.getElementById('btn-ingresar').textContent = 'Registrarse e Iniciar Prueba';
-                document.getElementById('btn-ingresar').onclick = registrarCandidato;
-                mostrarMensaje('Cédula no registrada. Complete sus datos para continuar.', 'info');
-            }
-        }
-        
-        async function registrarCandidato() {
-            const cedula = document.getElementById('cedula').value.trim();
-            const nombre = document.getElementById('nombre').value.trim();
-            const email = document.getElementById('email').value.trim();
-            
-            if (!cedula || !nombre) {
-                mostrarMensaje('Por favor complete todos los campos obligatorios', 'warning');
-                return;
-            }
-            
-            await guardarCandidato({
-                cedula: cedula,
-                nombre: nombre,
-                email: email,
-                fecha: new Date().toISOString(),
-                completado: false
-            });
-            
-            window.location.href = 'test.html?cedula=' + cedula;
-        }
-        
-        function continuarPrueba() {
-            const cedula = document.getElementById('cedula').value.trim();
-            window.location.href = 'test.html?cedula=' + cedula;
-        }
-        
-        function verResultados() {
-            const cedula = document.getElementById('cedula').value.trim();
-            window.location.href = 'resultados.html?cedula=' + cedula;
-        }
-        
-        function mostrarMensaje(mensaje, tipo) {
-            const div = document.getElementById('mensaje-status');
-            div.style.display = 'block';
-            div.className = 'alert alert-' + tipo;
-            div.textContent = mensaje;
-        }
-    </script>
 </body>
 </html>

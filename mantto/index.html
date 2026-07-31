@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Coordinador de Mantenimiento - MARYTER</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
-    <script src="js/dexie.min.js"></script>
-    <script src="js/jspdf.umd.min.js"></script>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../js/dexie.min.js"></script>
+    <script src="../js/jspdf.umd.min.js"></script>
 </head>
 <body>
     <div class="container">
         <div class="card">
             <div class="logo-container">
-                <img src="Sin-titulo-1.png" alt="MARYTER">
+                <img src="../Sin-titulo-1.png" alt="MARYTER">
             </div>
             
             <h1>Prueba Psicotécnica</h1>
@@ -47,6 +47,7 @@
                 <h2>Bienvenido, <span id="nombre-usuario"></span></h2>
                 <p>¿Qué desea hacer?</p>
                 <button class="btn btn-primary" onclick="continuarPrueba()">Continuar Prueba</button>
+                <button class="btn btn-success" onclick="verResultados()">Ver Resultados</button>
             </div>
         </div>
     </div>
@@ -55,10 +56,10 @@
         <p>MARYTER S.A.S - Dragados Mar y Ter | Cartagena de Indias, Colombia</p>
     </div>
     
-    <script src="js/db.js"></script>
-    <script src="js/preguntas_mantenimiento.js"></script>
-    <script src="js/test_mantenimiento.js"></script>
-    <script src="js/pdf_mantenimiento.js"></script>
+    <script>window.CARGO = 'mantenimiento';</script>
+    <script src="../js/config.js"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/preguntas_mantenimiento.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
@@ -66,22 +67,23 @@
         });
         
         async function verificarCandidato() {
-            const cedula = document.getElementById('cedula').value.trim();
+            var cfg = getCargoConfig();
+            var cedula = document.getElementById('cedula').value.trim();
             
             if (!cedula) {
                 mostrarMensaje('Por favor ingrese su número de cédula', 'warning');
                 return;
             }
             
-            const candidato = await obtenerCandidato(cedula);
-            const resultados = await obtenerResultados(cedula);
+            var candidato = await obtenerCandidato(cedula);
+            var resultados = await obtenerResultados(cedula);
             
             if (candidato && resultados && resultados.completada) {
+                document.getElementById('nombre-usuario').textContent = candidato.nombre;
                 document.getElementById('login-form').style.display = 'none';
-                mostrarMensaje('Usted ya realizó la prueba. Sus respuestas fueron registradas exitosamente.', 'success');
-                document.getElementById('mensaje-status').style.display = 'block';
+                document.getElementById('bienvenida').style.display = 'block';
             } else if (candidato) {
-                window.location.href = 'test_mantenimiento.html?cedula=' + cedula;
+                window.location.href = cfg.paginaTest + '?cedula=' + cedula;
             } else {
                 document.getElementById('datos-candidato').style.display = 'block';
                 document.getElementById('btn-ingresar').textContent = 'Registrarse e Iniciar Prueba';
@@ -91,9 +93,10 @@
         }
         
         async function registrarCandidato() {
-            const cedula = document.getElementById('cedula').value.trim();
-            const nombre = document.getElementById('nombre').value.trim();
-            const email = document.getElementById('email').value.trim();
+            var cfg = getCargoConfig();
+            var cedula = document.getElementById('cedula').value.trim();
+            var nombre = document.getElementById('nombre').value.trim();
+            var email = document.getElementById('email').value.trim();
             
             if (!cedula || !nombre) {
                 mostrarMensaje('Por favor complete todos los campos obligatorios', 'warning');
@@ -101,24 +104,23 @@
             }
             
             await guardarCandidato({
-                cedula: cedula,
-                nombre: nombre,
-                email: email,
-                fecha: new Date().toISOString(),
-                completado: false
+                cedula: cedula, nombre: nombre, email: email,
+                fecha: new Date().toISOString(), completado: false
             });
             
-            window.location.href = 'test_mantenimiento.html?cedula=' + cedula;
+            window.location.href = cfg.paginaTest + '?cedula=' + cedula;
         }
         
         function continuarPrueba() {
-            const cedula = document.getElementById('cedula').value.trim();
-            window.location.href = 'test_mantenimiento.html?cedula=' + cedula;
+            var cfg = getCargoConfig();
+            var cedula = document.getElementById('cedula').value.trim();
+            window.location.href = cfg.paginaTest + '?cedula=' + cedula;
         }
         
         function verResultados() {
-            const cedula = document.getElementById('cedula').value.trim();
-            window.location.href = 'resultados_mantenimiento.html?cedula=' + cedula;
+            var cfg = getCargoConfig();
+            var cedula = document.getElementById('cedula').value.trim();
+            window.location.href = cfg.paginaResultados + '?cedula=' + cedula;
         }
         
         function mostrarMensaje(mensaje, tipo) {

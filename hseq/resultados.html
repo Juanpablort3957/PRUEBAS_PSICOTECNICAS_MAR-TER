@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados - Coordinador HSEQ</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../js/dexie.min.js"></script>
+    <script src="../js/jspdf.umd.min.js"></script>
+    <script src="../js/html2canvas.min.js"></script>
+    <style>
+        .resultado-card{background:#fff;border-radius:12px;padding:32px;box-shadow:0 2px 16px rgba(0,0,0,0.08);margin-bottom:24px}
+        .resultado-header{display:flex;align-items:center;gap:20px;background:linear-gradient(135deg,#1a3a5c,#2563a8);color:#fff;border-radius:10px;padding:20px 28px;margin-bottom:28px}
+        .resultado-header img{width:90px;border-radius:6px;background:#fff;padding:4px}
+        .resultado-header h3{margin:0;font-size:1.3rem;font-weight:700}
+        .resultado-header p{margin:4px 0 0;font-size:0.9rem;opacity:0.85}
+        .badge-veredicto{font-size:1rem;padding:8px 22px;border-radius:20px;font-weight:700;letter-spacing:0.5px}
+        .disc-row{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+        .disc-letter{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;color:#fff;flex-shrink:0}
+        .disc-letter.D{background:#dc3545}.disc-letter.I{background:#fd7e14}.disc-letter.S{background:#198754}.disc-letter.C{background:#0d6efd}
+        .disc-label{width:130px;font-size:0.78rem;font-weight:600;color:#555;flex-shrink:0}
+        .disc-bar-outer{flex:1;background:#e9ecef;border-radius:6px;height:22px;overflow:hidden}
+        .disc-bar-inner{height:100%;border-radius:6px;transition:width 0.6s ease;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;font-size:0.75rem;font-weight:700;color:#fff}
+        .disc-bar-inner.alto{background:#198754}.disc-bar-inner.medio-alto{background:#0d6efd}.disc-bar-inner.medio{background:#fd7e14}.disc-bar-inner.bajo{background:#6c757d}
+        .disc-pct{width:42px;text-align:right;font-weight:700;font-size:0.9rem;color:#333}
+        .disc-nivel{width:90px;font-size:0.75rem;color:#777}
+        .compat-table th{background:#1a3a5c;color:#fff;font-size:0.82rem}
+        .compat-table td{font-size:0.85rem;vertical-align:middle}
+        .nivel-optimo{color:#198754;font-weight:700}.nivel-adecuado{color:#0d6efd;font-weight:700}.nivel-desarrollo{color:#fd7e14;font-weight:700}.nivel-insuficiente{color:#dc3545;font-weight:700}
+        .mini-bar{height:8px;border-radius:4px;background:#e9ecef}
+        .mini-bar-fill{height:8px;border-radius:4px}
+        .fortalezas-card{background:#f0fdf4;border-left:4px solid #198754;border-radius:8px;padding:16px 20px}
+        .desarrollo-card{background:#fff7ed;border-left:4px solid #fd7e14;border-radius:8px;padding:16px 20px}
+        .fortalezas-card h6{color:#198754;font-weight:700;margin-bottom:10px}
+        .desarrollo-card h6{color:#e07800;font-weight:700;margin-bottom:10px}
+        .fortalezas-card li,.desarrollo-card li{margin-bottom:5px;font-size:0.88rem}
+        .perfil-box{background:linear-gradient(135deg,#eef2ff,#e0e7ff);border-radius:10px;padding:18px 24px;border:1px solid #c7d2fe}
+        .perfil-box .perfil-nombre{font-size:1.15rem;font-weight:800;color:#3730a3;margin-bottom:6px}
+        .perfil-box .perfil-desc{font-size:0.9rem;color:#4b5563;margin:0}
+        .recomendacion-box{background:#f0f9ff;border:1px solid #bae6fd;border-radius:10px;padding:20px 24px}
+        .recomendacion-box h6{color:#0369a1;font-weight:700;margin-bottom:8px}
+        .recomendacion-box p{font-size:0.92rem;color:#1e3a5f;margin:0}
+        .interp-item{border-radius:8px;padding:14px 18px;margin-bottom:10px;border-left:4px solid}
+        .interp-item.D{border-color:#dc3545;background:#fff5f5}
+        .interp-item.I{border-color:#fd7e14;background:#fffbf5}
+        .interp-item.S{border-color:#198754;background:#f0fdf4}
+        .interp-item.C{border-color:#0d6efd;background:#f0f4ff}
+        .interp-item .interp-title{font-weight:700;font-size:0.9rem;margin-bottom:4px}
+        .interp-item .interp-text{font-size:0.85rem;color:#555;margin:0}
+        .section-title{font-size:1rem;font-weight:700;color:#1a3a5c;border-bottom:2px solid #e5e7eb;padding-bottom:8px;margin-bottom:16px}
+        .datos-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;margin-bottom:4px}
+        .datos-grid .dato{font-size:0.9rem}.datos-grid .dato strong{color:#1a3a5c}
+        @media(max-width:576px){.resultado-header{flex-direction:column;text-align:center}.datos-grid{grid-template-columns:1fr}}
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <div id="resultado-container">
+            <div class="card text-center p-5">
+                <div class="spinner-border text-primary mx-auto mb-3" role="status"></div>
+                <p class="text-muted">Cargando resultados...</p>
+            </div>
+        </div>
+        <div class="text-center mt-3 mb-5">
+            <a href="index.html" class="btn btn-outline-secondary">&larr; Volver al Inicio</a>
+        </div>
+    </div>
+
+    <div class="footer" style="text-align:center; padding:16px; color:#888; font-size:0.82rem;">
+        <p>MARYTER S.A.S - Dragados Mar y Ter | Cartagena de Indias, Colombia</p>
+    </div>
+
+    <script src="../js/db.js"></script>
+    <script>window.CARGO = 'hseq';</script>
+    <script src="../js/config.js"></script>
+    <script src="../js/preguntas_hseq.js"></script>
+    <script src="../js/pdf.js"></script>
+    <script src="../js/bootstrap.bundle.min.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', async function() {
+        var cfg = getCargoConfig();
+        await initDB();
+
+        var params = new URLSearchParams(window.location.search);
+        var cedula = params.get('cedula');
+        var dataEncoded = params.get('data');
+
+        if (!cedula) {
+            document.getElementById('resultado-container').innerHTML =
+                '<div class="alert alert-warning">No se proporcion&oacute; n&uacute;mero de c&eacute;dula. ' +
+                '<a href="' + cfg.paginaInicio + '">Volver al inicio</a></div>';
+            return;
+        }
+
+        if (!dataEncoded) {
+            document.getElementById('resultado-container').innerHTML =
+                '<div class="card text-center p-5">' +
+                '<img src="../Sin-titulo-1.png" alt="MARYTER" style="max-width:150px;margin:0 auto 20px;">' +
+                '<h2 style="color:#1a3a5c;">&iexcl;Gracias por tu participaci&oacute;n!</h2>' +
+                '<p style="color:#555;font-size:1.1rem;margin:20px 0;">Tus respuestas han sido registradas exitosamente.</p>' +
+                '<div style="background:#f0fdf4;border-radius:10px;padding:20px;margin:20px 0;">' +
+                '<p style="color:#198754;font-size:1rem;">El equipo evaluador revisar&aacute; tu perfil y se pondr&aacute; en contacto contigo pronto.</p>' +
+                '</div>' +
+                '<p style="color:#888;font-size:0.85rem;">MARYTER S.A.S - Dragados Mar y Ter</p>' +
+                '</div>';
+            return;
+        }
+
+        var resultado = await obtenerResultados(cedula);
+
+        if (!resultado && dataEncoded) {
+            try {
+                var decoded = JSON.parse(decodeURIComponent(escape(atob(dataEncoded))));
+                resultado = {
+                    cedula: decoded.cedula, nombre: decoded.nombre,
+                    email: decoded.email || 'No registrado',
+                    fecha: decoded.fecha || new Date().toISOString(),
+                    analisis: decoded.analisis, tecnico: decoded.tecnico,
+                    completada: true
+                };
+                await guardarResultados(resultado).catch(function() {});
+            } catch (e) { console.error('Error decodificando datos:', e); }
+        }
+
+        if (!resultado) {
+            document.getElementById('resultado-container').innerHTML =
+                '<div class="alert alert-danger">No se encontraron resultados para la c&eacute;dula ' + cedula + '. ' +
+                '<a href="' + cfg.paginaInicio + '">Volver al inicio</a></div>';
+            return;
+        }
+
+        window.resultadoGlobal = resultado;
+        mostrarResultado(resultado);
+    });
+    </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinador HSEQ - MARYTER</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../js/dexie.min.js"></script>
+    <script src="../js/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="logo-container">
+                <img src="../Sin-titulo-1.png" alt="MARYTER">
+            </div>
+            
+            <h1>Prueba Psicot&eacute;cnica</h1>
+            <h5 style="color:#1a3a5c;margin-bottom:20px;">Coordinador HSEQ</h5>
+            
+            <div id="login-form">
+                <div class="mb-4">
+                    <label class="form-label">N&uacute;mero de C&eacute;dula</label>
+                    <input type="text" class="form-control" id="cedula" placeholder="Ingrese su n&uacute;mero de c&eacute;dula" maxlength="15">
+                </div>
+                
+                <div id="datos-candidato" style="display: none;">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre Completo</label>
+                        <input type="text" class="form-control" id="nombre" placeholder="Ingrese su nombre completo">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Correo Electr&oacute;nico</label>
+                        <input type="email" class="form-control" id="email" placeholder="Ingrese su correo electr&oacute;nico">
+                    </div>
+                </div>
+                
+                <div id="mensaje-status" class="alert" style="display: none;"></div>
+                
+                <button class="btn btn-primary btn-block" id="btn-ingresar" onclick="verificarCandidato()">
+                    Ingresar
+                </button>
+            </div>
+            
+            <div id="bienvenida" class="bienvenida" style="display: none;">
+                <h2>Bienvenido, <span id="nombre-usuario"></span></h2>
+                <p>&iquest;Qu&eacute; desea hacer?</p>
+                <button class="btn btn-primary" onclick="continuarPrueba()">Continuar Prueba</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>MARYTER S.A.S - Dragados Mar y Ter | Cartagena de Indias, Colombia</p>
+    </div>
+    
+    <script>window.CARGO = 'hseq';</script>
+    <script src="../js/config.js"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/preguntas_hseq.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initDB();
+        });
+        
+        async function verificarCandidato() {
+            var cfg = getCargoConfig();
+            var cedula = document.getElementById('cedula').value.trim();
+            
+            if (!cedula) {
+                mostrarMensaje('Por favor ingrese su n&uacute;mero de c&eacute;dula', 'warning');
+                return;
+            }
+            
+            var candidato = await obtenerCandidato(cedula);
+            var resultados = await obtenerResultados(cedula);
+            
+            if (candidato && resultados && resultados.completada) {
+                document.getElementById('login-form').innerHTML =
+                    '<div class="alert alert-success text-center" style="font-size:1.1rem;">' +
+                    '<strong>&iexcl;Gracias por tu participaci&oacute;n!</strong><br>' +
+                    'Tus respuestas ya fueron registradas exitosamente. Pronto nos pondremos en contacto contigo.' +
+                    '</div>';
+            } else if (candidato) {
+                window.location.href = cfg.paginaTest + '?cedula=' + cedula;
+            } else {
+                document.getElementById('datos-candidato').style.display = 'block';
+                document.getElementById('btn-ingresar').textContent = 'Registrarse e Iniciar Prueba';
+                document.getElementById('btn-ingresar').onclick = registrarCandidato;
+                mostrarMensaje('C&eacute;dula no registrada. Complete sus datos para continuar.', 'info');
+            }
+        }
+        
+        async function registrarCandidato() {
+            var cfg = getCargoConfig();
+            var cedula = document.getElementById('cedula').value.trim();
+            var nombre = document.getElementById('nombre').value.trim();
+            var email = document.getElementById('email').value.trim();
+            
+            if (!cedula || !nombre) {
+                mostrarMensaje('Por favor complete todos los campos obligatorios', 'warning');
+                return;
+            }
+            
+            await guardarCandidato({
+                cedula: cedula, nombre: nombre, email: email,
+                fecha: new Date().toISOString(), completado: false
+            });
+            
+            window.location.href = cfg.paginaTest + '?cedula=' + cedula;
+        }
+        
+        function continuarPrueba() {
+            var cfg = getCargoConfig();
+            var cedula = document.getElementById('cedula').value.trim();
+            window.location.href = cfg.paginaTest + '?cedula=' + cedula;
+        }
+        
+        function mostrarMensaje(mensaje, tipo) {
+            var div = document.getElementById('mensaje-status');
+            div.style.display = 'block';
+            div.className = 'alert alert-' + tipo;
+            div.textContent = mensaje;
+        }
+    </script>
+</body>
+</html>

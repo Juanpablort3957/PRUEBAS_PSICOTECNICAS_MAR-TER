@@ -1,5 +1,6 @@
-let candidatosData = [];
-let resultadosData = [];
+var candidatosData = [];
+var resultadosData = [];
+var cedulaSeleccionada = null;
 
 async function cargarDatos() {
     candidatosData = await obtenerTodosCandidatos();
@@ -7,324 +8,234 @@ async function cargarDatos() {
     renderizarLista();
 }
 
+function getPromedio(resultado) {
+    if (!resultado.analisis || !resultado.analisis.compatibilidad) return 0;
+    var vals = Object.values(resultado.analisis.compatibilidad);
+    return vals.length > 0 ? vals.reduce(function(a, b) { return a + b; }, 0) / vals.length : 0;
+}
+
 function renderizarLista() {
-    const tbody = document.getElementById('candidatos-lista');
+    var tbody = document.getElementById('candidatos-lista');
     if (!tbody) return;
-    
     tbody.innerHTML = '';
-    
+
     if (resultadosData.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay candidatos evaluados aún</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay candidatos evaluados a\u00fan</td></tr>';
+        updateStats();
         return;
     }
-    
-    resultadosData.forEach(resultado => {
-        const candidato = candidatosData.find(c => c.cedula === resultado.cedula);
-        const nombre = candidato ? candidato.nombre : resultado.nombre || 'Desconocido';
-        const fecha = new Date(resultado.fecha).toLocaleDateString('es-CO');
-        
-        let estadoBadge = '';
-        let veredicto = '';
-        
+
+    resultadosData.forEach(function(resultado) {
+        var candidato = candidatosData.find(function(c) { return c.cedula === resultado.cedula; });
+        var nombre = candidato ? candidato.nombre : resultado.nombre || 'Desconocido';
+        var fecha = new Date(resultado.fecha).toLocaleDateString('es-CO');
+        var prom = getPromedio(resultado);
+        var badge;
+
         if (resultado.analisis && resultado.analisis.compatibilidad) {
-            const promedioGeneral = Object.values(resultado.analisis.compatibilidad).reduce((a, b) => a + b, 0) / Object.keys(resultado.analisis.compatibilidad).length;
-            
-            if (promedioGeneral >= 75) {
-                estadoBadge = '<span class="badge bg-success">APTO</span>';
-                veredicto = 'APTO';
-            } else if (promedioGeneral >= 55) {
-                estadoBadge = '<span class="badge bg-info">APTO C/DESARROLLO</span>';
-                veredicto = 'APTO CON DESARROLLO';
-            } else if (promedioGeneral >= 40) {
-                estadoBadge = '<span class="badge bg-warning">EVALUAR</span>';
-                veredicto = 'REQUIERE EVALUACION';
-            } else {
-                estadoBadge = '<span class="badge bg-danger">NO APTO</span>';
-                veredicto = 'NO RECOMENDADO';
-            }
+            if (prom >= 75) badge = '<span class="badge bg-success">APTO</span>';
+            else if (prom >= 55) badge = '<span class="badge bg-info">APTO C/DESARROLLO</span>';
+            else if (prom >= 40) badge = '<span class="badge bg-warning">EVALUAR</span>';
+            else badge = '<span class="badge bg-danger">NO APTO</span>';
         } else {
-            estadoBadge = '<span class="badge bg-secondary">EN PROCESO</span>';
-            veredicto = '';
+            badge = '<span class="badge bg-secondary">EN PROCESO</span>';
         }
-        
-        const perfilDISC = resultado.analisis?.perfil || 'N/A';
-        
-        tbody.innerHTML += `
-            <tr onclick="verDetalle('${resultado.cedula}')" style="cursor: pointer;">
-                <td>${resultado.cedula}</td>
-                <td>${nombre}</td>
-                <td>${fecha}</td>
-                <td>${estadoBadge}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); verDetalle('${resultado.cedula}')">
-                        Ver Detalle
-                    </button>
-                    <button class="btn btn-sm btn-success" onclick="event.stopPropagation(); descargarPDF('${resultado.cedula}')">
-                        PDF
-                    </button>
-                    <button class="btn btn-sm btn-info" onclick="event.stopPropagation(); copiarLinkPrueba('${resultado.cedula}', '${nombre}')" title="Copiar link de prueba al portapapeles">
-                        🔗 Link
-                    </button>
-                </td>
-            </tr>
-        `;
+
+        tbody.innerHTML += '<tr onclick="verDetalle(\'' + resultado.cedula + '\')" style="cursor: pointer;">'
+            + '<td>' + resultado.cedula + '</td><td>' + nombre + '</td><td>' + fecha + '</td><td>' + badge + '</td>'
+            + '<td>'
+            + '<button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); verDetalle(\'' + resultado.cedula + '\')">Ver Detalle</button>'
+            + '<button class="btn btn-sm btn-success" onclick="event.stopPropagation(); descargarPDF(\'' + resultado.cedula + '\')">PDF</button>'
+            + '<button class="btn btn-sm btn-info" onclick="event.stopPropagation(); copiarLinkPrueba(\'' + resultado.cedula + '\', \'' + nombre.replace(/'/g, "\\'") + '\')" title="Copiar link de prueba">\ud83d\udd17 Link</button>'
+            + '</td></tr>';
     });
-    
+
+    updateStats();
+}
+
+function updateStats() {
     document.getElementById('total-candidatos').textContent = resultadosData.length;
-    
-    const completados = resultadosData.filter(r => r.completada).length;
+    var completados = resultadosData.filter(function(r) { return r.completada; }).length;
     document.getElementById('completados').textContent = completados;
-    
-    const aptos = resultadosData.filter(r => {
-        if (!r.analisis || !r.analisis.compatibilidad) return false;
-        const promedio = Object.values(r.analisis.compatibilidad).reduce((a, b) => a + b, 0) / Object.keys(r.analisis.compatibilidad).length;
-        return promedio >= 55;
-    }).length;
-    
+    var aptos = resultadosData.filter(function(r) { return getPromedio(r) >= 55; }).length;
     document.getElementById('pendientes').textContent = aptos;
 }
 
 async function verDetalle(cedula) {
-    const resultado = await obtenerResultados(cedula);
-    if (!resultado) {
-        alert('Resultado no encontrado');
-        return;
-    }
-    
-    const candidato = await obtenerCandidato(cedula);
-    
-    let html = `
-        <div class="modal fade" id="modalDetalle" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Detalle del Candidato - Perfil DISC</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <strong>Cédula:</strong> ${cedula}
-                            </div>
-                            <div class="col-md-6">
-                                <strong>Nombre:</strong> ${candidato?.nombre || resultado.nombre}
-                            </div>
-                            <div class="col-md-6">
-                                <strong>Email:</strong> ${candidato?.email || resultado.email || 'No proporcionado'}
-                            </div>
-                            <div class="col-md-6">
-                                <strong>Fecha:</strong> ${new Date(resultado.fecha).toLocaleDateString('es-CO')}
-                            </div>
-                            <div class="col-md-6">
-                                <strong>Perfil DISC:</strong> ${resultado.analisis?.perfil || 'N/A'}
-                            </div>
-                        </div>
-                        
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <h6>Gráfico DISC</h6>
-                                ${['D', 'I', 'S', 'C'].map(dim => {
-                                    const percentil = resultado.analisis?.percentiles?.[dim] || 0;
-                                    const nombreDim = {
-                                        D: 'DOMINANCIA',
-                                        I: 'INFLUENCIA',
-                                        S: 'CONSTANCIA',
-                                        C: 'CONSCIENCIOSIDAD'
-                                    }[dim];
-                                    let colorClass = 'bg-secondary';
-                                    if (percentil >= 75) colorClass = 'bg-success';
-                                    else if (percentil >= 55) colorClass = 'bg-primary';
-                                    else if (percentil >= 40) colorClass = 'bg-warning';
-                                    
-                                    return `
-                                        <div class="d-flex align-items-center mb-2">
-                                            <div style="width: 30px;"><strong>${dim}</strong></div>
-                                            <div class="flex-grow-1">
-                                                <div class="progress" style="height: 20px;">
-                                                    <div class="progress-bar ${colorClass}" style="width: ${percentil}%">${percentil}%</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    `;
-                                }).join('')}
-                            </div>
-                        </div>
-                        
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <h6>Compatibilidad con el Cargo</h6>
-                                <table class="table table-sm">
-                                    <thead>
-                                        <tr>
-                                            <th>Requisito</th>
-                                            <th>Percentil</th>
-                                            <th>Evaluación</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${resultado.analisis?.compatibilidad ? Object.entries(resultado.analisis.compatibilidad).map(([req, percentil]) => {
-                                            let evalText = 'En Desarrollo';
-                                            let evalClass = 'text-warning';
-                                            if (percentil >= 75) { evalText = 'Óptimo'; evalClass = 'text-success'; }
-                                            else if (percentil >= 55) { evalText = 'Adecuado'; evalClass = 'text-primary'; }
-                                            else if (percentil < 40) { evalText = 'Insuficiente'; evalClass = 'text-danger'; }
-                                            
-                                            const reqLabel = {
-                                                conocimientoNormativo: 'Conocimiento Normativo SST',
-                                                liderazgoSeguridad: 'Liderazgo en Seguridad',
-                                                gestionSST: 'Gestión SG-SST',
-                                                comunicacionRiesgos: 'Comunicación de Riesgos',
-                                                investigacionIncidentes: 'Investigación de Incidentes',
-                                                trabajoCampo: 'Trabajo de Campo',
-                                                capacitacionSST: 'Capacitación en SST',
-                                                gestionAmbiental: 'Gestión Ambiental',
-                                                auditoriaVerificacion: 'Auditoría y Verificación',
-                                                cumplimientoLegal: 'Cumplimiento Legal'
-                                            }[req] || req;
-                                            
-                                            return `
-                                                <tr>
-                                                    <td>${reqLabel}</td>
-                                                    <td>${percentil}%</td>
-                                                    <td class="${evalClass}">${evalText}</td>
-                                                </tr>
-                                            `;
-                                        }).join('') : '<tr><td colspan="3">Sin datos</td></tr>'}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="analisis-card fortalezas">
-                                    <h6>Fortalezas</h6>
-                                    <ul>
-                                        ${(resultado.analisis?.fortalezas || []).map(f => `<li>${f}</li>`).join('') || '<li>No identificadas</li>'}
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="analisis-card debilidades">
-                                    <h6>Areas de Desarrollo</h6>
-                                    <ul>
-                                        ${(resultado.analisis?.areasDesarrollo || []).map(d => `<li>${d}</li>`).join('') || '<li>No identificadas</li>'}
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="alert alert-info mt-3">
-                            <h6>Recomendación:</h6>
-                            <p class="mb-0">${resultado.analisis?.recomendacion || 'Sin recomendación disponible'}</p>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-success" onclick="descargarPDF('${cedula}')">
-                            Descargar PDF
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    const modalContainer = document.getElementById('modal-container') || createModalContainer();
-    modalContainer.innerHTML = html;
-    
-    const modal = new bootstrap.Modal(modalContainer.querySelector('#modalDetalle'));
+    var resultado = await obtenerResultados(cedula);
+    if (!resultado) { alert('Resultado no encontrado'); return; }
+    var candidato = await obtenerCandidato(cedula);
+    var cfg = getCargoConfig();
+
+    var discBars = ['D', 'I', 'S', 'C'].map(function(dim) {
+        var p = resultado.analisis?.percentiles?.[dim] || 0;
+        var cls = p >= 75 ? 'bg-success' : p >= 55 ? 'bg-primary' : p >= 40 ? 'bg-warning' : 'bg-secondary';
+        return '<div class="d-flex align-items-center mb-2"><div style="width:30px"><strong>' + dim + '</strong></div>'
+            + '<div class="flex-grow-1"><div class="progress" style="height:20px"><div class="progress-bar ' + cls + '" style="width:' + p + '%">' + p + '%</div></div></div></div>';
+    }).join('');
+
+    var compatRows = resultado.analisis?.compatibilidad
+        ? cfg.reqLabels.map(function(r) {
+            var p = resultado.analisis.compatibilidad[r.key] || 0;
+            var ev = p >= 75 ? ['\u00d3ptimo', 'text-success'] : p >= 55 ? ['Adecuado', 'text-primary'] : p >= 40 ? ['En Desarrollo', 'text-warning'] : ['Insuficiente', 'text-danger'];
+            return '<tr><td>' + r.label + '</td><td>' + p + '%</td><td class="' + ev[1] + '">' + ev[0] + '</td></tr>';
+        }).join('')
+        : '<tr><td colspan="3">Sin datos</td></tr>';
+
+    var html = '<div class="modal fade" id="modalDetalle" tabindex="-1">'
+        + '<div class="modal-dialog modal-lg"><div class="modal-content">'
+        + '<div class="modal-header"><h5 class="modal-title">Detalle del Candidato - ' + cfg.nombre + '</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>'
+        + '<div class="modal-body">'
+        + '<div class="row mb-3"><div class="col-md-6"><strong>C\u00e9dula:</strong> ' + cedula + '</div>'
+        + '<div class="col-md-6"><strong>Nombre:</strong> ' + (candidato?.nombre || resultado.nombre) + '</div>'
+        + '<div class="col-md-6"><strong>Email:</strong> ' + (candidato?.email || resultado.email || 'No proporcionado') + '</div>'
+        + '<div class="col-md-6"><strong>Fecha:</strong> ' + new Date(resultado.fecha).toLocaleDateString('es-CO') + '</div>'
+        + '<div class="col-md-6"><strong>Perfil DISC:</strong> ' + (resultado.analisis?.perfil || 'N/A') + '</div></div>'
+        + '<div class="card mb-3"><div class="card-body"><h6>Gr\u00e1fico DISC</h6>' + discBars + '</div></div>'
+        + '<div class="card mb-3"><div class="card-body"><h6>Compatibilidad con el Cargo: ' + cfg.nombre + '</h6>'
+        + '<table class="table table-sm"><thead><tr><th>Requisito</th><th>Percentil</th><th>Evaluaci\u00f3n</th></tr></thead><tbody>' + compatRows + '</tbody></table></div></div>'
+        + '<div class="row"><div class="col-md-6"><div class="analisis-card fortalezas"><h6>Fortalezas</h6><ul>'
+        + ((resultado.analisis?.fortalezas || []).length > 0 ? resultado.analisis.fortalezas.map(function(f) { return '<li>' + f + '</li>'; }).join('') : '<li>No identificadas</li>') + '</ul></div></div>'
+        + '<div class="col-md-6"><div class="analisis-card debilidades"><h6>\u00c1reas de Desarrollo</h6><ul>'
+        + ((resultado.analisis?.areasDesarrollo || []).length > 0 ? resultado.analisis.areasDesarrollo.map(function(a) { return '<li>' + a + '</li>'; }).join('') : '<li>No identificadas</li>') + '</ul></div></div></div>'
+        + '<div class="alert alert-info mt-3"><h6>Recomendaci\u00f3n:</h6><p class="mb-0">' + (resultado.analisis?.recomendacion || 'Sin recomendaci\u00f3n disponible') + '</p></div>'
+        + '</div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>'
+        + '<button type="button" class="btn btn-success" onclick="descargarPDF(\'' + cedula + '\')">Descargar PDF</button></div></div></div></div>';
+
+    var container = document.getElementById('modal-container') || createModalContainer();
+    container.innerHTML = html;
+    var modal = new bootstrap.Modal(container.querySelector('#modalDetalle'));
     modal.show();
 }
 
 function createModalContainer() {
-    const container = document.createElement('div');
-    container.id = 'modal-container';
-    document.body.appendChild(container);
-    return container;
+    var c = document.createElement('div');
+    c.id = 'modal-container';
+    document.body.appendChild(c);
+    return c;
 }
 
 async function descargarPDF(cedula) {
     try {
-        const resultado = await obtenerResultados(cedula);
-        if (!resultado) {
-            alert('Resultado no encontrado');
-            return;
-        }
-        
-        await generarPDF(resultado);
-    } catch (e) {
-        console.error('Error al generar PDF:', e);
-        alert('Error al generar PDF: ' + (e.message || e));
-    }
+        var resultado = await obtenerResultados(cedula);
+        if (!resultado) { alert('Resultado no encontrado'); return; }
+        if (resultado.tecnico && resultado.tecnico.analisis) await generarPDFCompleto(resultado, resultado.tecnico);
+        else await generarPDF(resultado);
+    } catch (e) { console.error('Error:', e); alert('Error al generar PDF: ' + (e.message || e)); }
 }
 
 async function cambiarPassword() {
-    const nuevoPassword = prompt('Ingrese la nueva contraseña:');
-    if (nuevoPassword && nuevoPassword.length >= 4) {
-        await cambiarPassword(nuevoPassword);
-        alert('Contraseña actualizada correctamente');
-    } else if (nuevoPassword) {
-        alert('La contraseña debe tener al menos 4 caracteres');
-    }
+    var nuevo = prompt('Ingrese la nueva contrase\u00f1a:');
+    if (nuevo && nuevo.length >= 4) {
+        await cambiarPassword(nuevo);
+        alert('Contrase\u00f1a actualizada correctamente');
+    } else if (nuevo) alert('La contrase\u00f1a debe tener al menos 4 caracteres');
 }
 
 function filtrarPorFecha() {
-    const filtro = document.getElementById('filtro-fecha').value;
-    if (!filtro) {
-        renderizarLista();
-        return;
-    }
-    
-    const fechaFiltro = new Date(filtro).toDateString();
-    
-    const filtrados = resultadosData.filter(r => {
-        const fechaResultado = new Date(r.fecha).toDateString();
-        return fechaResultado === fechaFiltro;
+    var filtro = document.getElementById('filtro-fecha').value;
+    if (!filtro) { renderizarLista(); return; }
+    var fechaFiltro = new Date(filtro).toDateString();
+    var filtrados = resultadosData.filter(function(r) {
+        return new Date(r.fecha).toDateString() === fechaFiltro;
     });
-    
-    const tbody = document.getElementById('candidatos-lista');
+    var tbody = document.getElementById('candidatos-lista');
     tbody.innerHTML = '';
-    
     if (filtrados.length === 0) {
         tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay resultados para esta fecha</td></tr>';
         return;
     }
-    
-    filtrados.forEach(resultado => {
-        const candidato = candidatosData.find(c => c.cedula === resultado.cedula);
-        const nombre = candidato ? candidato.nombre : resultado.nombre || 'Desconocido';
-        const fecha = new Date(resultado.fecha).toLocaleDateString('es-CO');
-        const estado = resultado.completada ? 
-            '<span class="badge bg-success">Completado</span>' : 
-            '<span class="badge bg-warning">Pendiente</span>';
-        
-        tbody.innerHTML += `
-            <tr onclick="verDetalle('${resultado.cedula}')" style="cursor: pointer;">
-                <td>${resultado.cedula}</td>
-                <td>${nombre}</td>
-                <td>${fecha}</td>
-                <td>${estado}</td>
-                <td>
-                    <button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); verDetalle('${resultado.cedula}')">
-                        Ver Detalle
-                    </button>
-                    <button class="btn btn-sm btn-success" onclick="event.stopPropagation(); descargarPDF('${resultado.cedula}')">
-                        PDF
-                    </button>
-                    <button class="btn btn-sm btn-info" onclick="event.stopPropagation(); copiarLinkPrueba('${resultado.cedula}', '${nombre}')" title="Copiar link de prueba al portapapeles">
-                        🔗 Link
-                    </button>
-                </td>
-            </tr>
-        `;
+    filtrados.forEach(function(r) {
+        var c = candidatosData.find(function(x) { return x.cedula === r.cedula; });
+        var nombre = c ? c.nombre : r.nombre || 'Desconocido';
+        var fecha = new Date(r.fecha).toLocaleDateString('es-CO');
+        var prom = getPromedio(r);
+        var badge;
+        if (r.analisis && r.analisis.compatibilidad) {
+            if (prom >= 75) badge = '<span class="badge bg-success">APTO</span>';
+            else if (prom >= 55) badge = '<span class="badge bg-info">APTO C/DESARROLLO</span>';
+            else if (prom >= 40) badge = '<span class="badge bg-warning">EVALUAR</span>';
+            else badge = '<span class="badge bg-danger">NO APTO</span>';
+        } else badge = '<span class="badge bg-secondary">EN PROCESO</span>';
+
+        tbody.innerHTML += '<tr onclick="verDetalle(\'' + r.cedula + '\')" style="cursor: pointer;">'
+            + '<td>' + r.cedula + '</td><td>' + nombre + '</td><td>' + fecha + '</td><td>' + badge + '</td>'
+            + '<td><button class="btn btn-sm btn-primary" onclick="event.stopPropagation(); verDetalle(\'' + r.cedula + '\')">Ver Detalle</button>'
+            + '<button class="btn btn-sm btn-success" onclick="event.stopPropagation(); descargarPDF(\'' + r.cedula + '\')">PDF</button>'
+            + '<button class="btn btn-sm btn-info" onclick="event.stopPropagation(); copiarLinkPrueba(\'' + r.cedula + '\', \'' + nombre.replace(/'/g, "\\'") + '\')">\ud83d\udd17 Link</button></td></tr>';
     });
 }
 
+function getBaseUrl() {
+    var input = document.getElementById('base-url');
+    if (!input) return '';
+    var url = input.value.trim().replace(/\/+$/, '');
+    sessionStorage.setItem('base_url', url);
+    return url;
+}
+
+function guardarBaseUrl() {
+    var url = getBaseUrl();
+    alert('URL base guardada: ' + url);
+}
+
+function actualizarPreviewLink(link) {
+    var el = document.getElementById('preview-link');
+    if (el) el.textContent = link || '\u2014';
+}
+
+async function copiarLinkPrueba(cedula, nombre) {
+    var baseUrl = getBaseUrl();
+    if (!baseUrl) { alert('Primero configura la URL del sitio.'); document.getElementById('base-url')?.focus(); return; }
+    var cfg = getCargoConfig();
+    cedulaSeleccionada = cedula;
+    var link = baseUrl + '/' + cfg.paginaTest + '?cedula=' + encodeURIComponent(cedula);
+    var btn = document.getElementById('btn-enviar-link');
+    if (btn) btn.disabled = false;
+    try {
+        await navigator.clipboard.writeText(link);
+        actualizarPreviewLink(link);
+        alert('\u2705 Link copiado para ' + nombre + ':\n' + link);
+    } catch (e) {
+        prompt('Copia este link manualmente:', link);
+        actualizarPreviewLink(link);
+    }
+}
+
+async function enviarLinkSeleccionado() {
+    if (!cedulaSeleccionada) { alert('Primero haz clic en \ud83d\udd17 Link de un candidato.'); return; }
+    var cfg = getCargoConfig();
+    var candidato = await obtenerCandidato(cedulaSeleccionada);
+    if (!candidato || !candidato.email) { alert('El candidato no tiene email registrado.'); return; }
+    var baseUrl = getBaseUrl();
+    if (!baseUrl) { alert('Configura la URL del sitio primero.'); return; }
+    var link = baseUrl + '/' + cfg.paginaTest + '?cedula=' + encodeURIComponent(cedulaSeleccionada);
+
+    try {
+        emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+        await emailjs.send(EMAILJS_CONFIG.SERVICE_ID, EMAILJS_CONFIG.TEMPLATE_ID, {
+            nombre: candidato.nombre,
+            cedula: cedulaSeleccionada,
+            email_evaluador: EMAILJS_CONFIG.EMAIL_DESTINO,
+            linkResultados: link,
+            perfil: 'Candidato a ' + cfg.nombre,
+            veredicto: 'PENDIENTE',
+            compatibilidad: 'Enlace enviado',
+            puntajeD: 0, puntajeI: 0, puntajeS: 0, puntajeC: 0,
+            fortalezas: 'Realizar prueba psicot\u00e9cnica',
+            areasDesarrollo: 'N/A',
+            fecha: new Date().toLocaleDateString('es-CO'),
+            tecnico_puntaje: 0, tecnico_total: 0, tecnico_porcentaje: 0, tecnico_veredicto: ''
+        });
+        alert('\u2705 Link enviado a ' + candidato.email);
+    } catch (e) {
+        console.error('Error enviando:', e);
+        alert('Error al enviar: ' + (e.message || e) + '\n\nLink copiado al portapapeles.');
+    }
+}
+
 async function _verificarPasswordDB(password) {
-    return await window.db.config.get('password').then(config => {
-        return config && config.value === password;
-    });
+    return await verificarPassword(password);
 }
 
 async function mostrarPanel() {
@@ -338,80 +249,10 @@ function cerrarSesion() {
     window.location.reload();
 }
 
-function getBaseUrl() {
-    const input = document.getElementById('base-url');
-    if (!input) return '';
-    let url = input.value.trim().replace(/\/+$/, '');
-    sessionStorage.setItem('base_url', url);
-    return url;
-}
-
-function guardarBaseUrl() {
-    const url = getBaseUrl();
-    alert('URL base guardada: ' + url);
-}
-
-function actualizarPreviewLink(link) {
-    const el = document.getElementById('preview-link');
-    if (el) el.textContent = link || '—';
-}
-
-let cedulaSeleccionada = null;
-
-async function copiarLinkPrueba(cedula, nombre) {
-    const baseUrl = getBaseUrl();
-    if (!baseUrl) {
-        alert('Primero configura la URL del sitio en el campo superior.');
-        document.getElementById('base-url')?.focus();
-        return;
-    }
-    cedulaSeleccionada = cedula;
-    const link = baseUrl + '/test.html?cedula=' + encodeURIComponent(cedula);
-    document.getElementById('btn-enviar-link').disabled = false;
-    try {
-        await navigator.clipboard.writeText(link);
-        actualizarPreviewLink(link);
-        alert('✅ Link copiado al portapapeles para ' + nombre + ':\n' + link + '\n\nPégalo en WhatsApp o email para enviarlo al candidato.');
-    } catch {
-        prompt('Copia este link manualmente para ' + nombre + ':', link);
-        actualizarPreviewLink(link);
-    }
-}
-
-async function enviarLinkSeleccionado() {
-    if (!cedulaSeleccionada) {
-        alert('Primero haz clic en 🔗 Link de un candidato.');
-        return;
-    }
-    const candidato = await obtenerCandidato(cedulaSeleccionada);
-    if (!candidato || !candidato.email) {
-        alert('El candidato no tiene email registrado. Primero debe registrarse en index.html.');
-        return;
-    }
-    const baseUrl = getBaseUrl();
-    if (!baseUrl) {
-        alert('Configura la URL del sitio primero.');
-        return;
-    }
-    const link = baseUrl + '/test.html?cedula=' + encodeURIComponent(cedulaSeleccionada);
-    // Para habilitar el envío automático:
-    // 1. Ir a EmailJS → Email Templates → Create New Template
-    // 2. Usar variables: {{nombre}}, {{cedula}}, {{linkPrueba}}
-    // 3. Copiar el Template ID y reemplazar abajo
-    // 4. Descomentar el código de emailjs.send
-    alert('Para enviar automáticamente:\n1. Crea un template en EmailJS con {{nombre}}, {{cedula}}, {{linkPrueba}}\n2. Copia el Template ID\n3. Descomenta el código en panel.js enviarLinkSeleccionado\n\nPor ahora, el link se copió al portapapeles. Pégalo en WhatsApp.');
-    /*  // --- DESCOMENTAR CUANDO TENGAS EL TEMPLATE ---
-    try {
-        emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
-        await emailjs.send(EMAILJS_CONFIG.SERVICE_ID, 'TU_TEMPLATE_ID', {
-            nombre: candidato.nombre,
-            cedula: cedulaSeleccionada,
-            linkPrueba: link,
-            to_email: candidato.email
-        });
-        alert('✅ Link enviado a ' + candidato.email);
-    } catch (e) {
-        alert('Error al enviar email: ' + e.message);
-    }
-    */
+async function _cambiarPasswordPanel() {
+    var nuevo = prompt('Ingrese la nueva contrase\u00f1a:');
+    if (nuevo && nuevo.length >= 4) {
+        await cambiarPassword(nuevo);
+        alert('Contrase\u00f1a actualizada correctamente');
+    } else if (nuevo) alert('La contrase\u00f1a debe tener al menos 4 caracteres');
 }

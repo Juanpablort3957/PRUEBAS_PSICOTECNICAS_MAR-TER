@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prueba Psicotécnica - Coordinador de Mantenimiento</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
 </head>
 <body>
     <div class="container">
         <div class="card">
             <div class="prueba-header">
-                <img src="Sin-titulo-1.png" alt="MARYTER" id="logo-image" style="width: 150px; margin-bottom: 15px;">
+                <img src="../Sin-titulo-1.png" alt="MARYTER" id="logo-image" style="width: 150px; margin-bottom: 15px;">
                 <h3>Prueba Psicotécnica</h3>
                 <p style="color:#1a3a5c;font-weight:600;">Coordinador de Mantenimiento y Logística</p>
                 <p id="nombre-candidato"></p>
@@ -21,29 +21,32 @@
         </div>
     </div>
     
-    <script src="js/dexie.min.js"></script>
-    <script src="js/emailjs.min.js"></script>
-    <script src="js/jspdf.umd.min.js"></script>
-    <script src="js/html2canvas.min.js"></script>
-    <script src="js/db.js"></script>
-    <script src="js/preguntas_mantenimiento.js"></script>
-    <script src="js/test_mantenimiento.js"></script>
-    <script src="js/pdf_mantenimiento.js"></script>
+    <script src="../js/dexie.min.js"></script>
+    <script src="../js/emailjs.min.js"></script>
+    <script src="../js/jspdf.umd.min.js"></script>
+    <script src="../js/html2canvas.min.js"></script>
+    <script>window.CARGO = 'mantenimiento';</script>
+    <script src="../js/config.js"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/preguntas_mantenimiento.js"></script>
+    <script src="../js/test.js"></script>
+    <script src="../js/pdf.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
+            var cfg = getCargoConfig();
             await initDB();
             
-            const params = new URLSearchParams(window.location.search);
-            const cedula = params.get('cedula');
+            var params = new URLSearchParams(window.location.search);
+            var cedula = params.get('cedula');
             
             if (!cedula) {
                 alert('No se proporcionó cédula');
-                window.location.href = 'index_mantenimiento.html';
+                window.location.href = cfg.paginaInicio;
                 return;
             }
             
-            const candidato = await obtenerCandidato(cedula);
+            var candidato = await obtenerCandidato(cedula);
             if (candidato) {
                 document.getElementById('nombre-candidato').textContent = candidato.nombre + ' - ' + cedula;
             }

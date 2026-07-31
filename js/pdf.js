@@ -1,5 +1,3 @@
-// ======================== html2canvas helpers ========================
-
 async function _capturarHTML(html, width) {
     var div = document.createElement('div');
     div.innerHTML = html;
@@ -10,18 +8,12 @@ async function _capturarHTML(html, width) {
         return img.complete ? Promise.resolve() : new Promise(function(r) { img.onload = r; img.onerror = r; });
     }));
     await new Promise(function(r) { setTimeout(r, 300); });
+    var canvas;
     try {
-        var canvas = await html2canvas(div, {
-            scale: 2,
-            backgroundColor: '#ffffff',
-            useCORS: true,
-            allowTaint: true,
-            logging: false,
-            width: width,
-        });
+        canvas = await html2canvas(div, { scale: 2, backgroundColor: '#ffffff', useCORS: true, allowTaint: true, logging: false, width: width });
     } catch (e) {
         document.body.removeChild(div);
-        throw new Error('html2canvas falló: ' + (e.message || e));
+        throw new Error('html2canvas fall\u00f3: ' + (e.message || e));
     }
     document.body.removeChild(div);
     return canvas;
@@ -31,8 +23,7 @@ function _agregarCanvasPDF(canvas, doc) {
     var pw = doc.internal.pageSize.getWidth() - 30;
     var ph = doc.internal.pageSize.getHeight() - 30;
     var imgH = (canvas.height / canvas.width) * pw;
-    var srcY = 0;
-    var page = 0;
+    var srcY = 0, page = 0;
     while (srcY < canvas.height) {
         if (page > 0) doc.addPage();
         var sliceRatio = ph / imgH;
@@ -64,50 +55,39 @@ async function _logoData() {
             reader.onload = function() { resolve(reader.result); };
             reader.readAsDataURL(blob);
         });
-    } catch (e) {
-        return '';
-    }
+    } catch (e) { return ''; }
 }
 
-// ======================== HTML builders ========================
-
 async function _buildDISC(resultado) {
-    var CARGO = 'Analista SIG';
+    var cfg = getCargoConfig();
+    var CARGO = cfg.cargoFormal;
     var analisis = resultado.analisis || {};
     var percentiles = analisis.percentiles || { D:0, I:0, S:0, C:0 };
     var compatibilidad = analisis.compatibilidad || {};
     var prom = Object.keys(compatibilidad).length > 0
-        ? Math.round(Object.values(compatibilidad).reduce(function(a,b) { return a+b; }, 0) / Object.keys(compatibilidad).length)
-        : 0;
+        ? Math.round(Object.values(compatibilidad).reduce(function(a,b) { return a+b; }, 0) / Object.keys(compatibilidad).length) : 0;
     var vBg = '#6c757d', vText = 'En Proceso';
     if (prom >= 75) { vBg = '#198754'; vText = 'APTO'; }
     else if (prom >= 55) { vBg = '#0d6efd'; vText = 'APTO CON DESARROLLO'; }
     else if (prom >= 40) { vBg = '#fd7e14'; vText = 'REQUIERE EVALUACI\u00d3N ADICIONAL'; }
     else if (prom > 0) { vBg = '#dc3545'; vText = 'NO RECOMENDADO'; }
+
     var perfilNombre = analisis.perfil || analisis.estilo || 'N/A';
     var perfilDesc = analisis.descripcionEstilo || analisis.estilo || '';
     var fecha = new Date(resultado.fecha).toLocaleDateString('es-CO', { year:'numeric', month:'long', day:'numeric' });
+
     var dims = [
         { key:'D', label:'Dominancia', color:'#dc3545', bg:'#fff5f5' },
         { key:'I', label:'Influencia', color:'#fd7e14', bg:'#fffbf5' },
         { key:'S', label:'Estabilidad', color:'#198754', bg:'#f0fdf4' },
         { key:'C', label:'Conscienciosidad', color:'#0d6efd', bg:'#f0f4ff' }
     ];
-    var reqLabels = [
-        { key:'conocimientoNormativo', label:'Conocimiento Normativo SST' },
-        { key:'liderazgoSeguridad', label:'Liderazgo en Seguridad' },
-        { key:'gestionSST', label:'Gesti\u00f3n del SG-SST' },
-        { key:'comunicacionRiesgos', label:'Comunicaci\u00f3n de Riesgos' },
-        { key:'investigacionIncidentes', label:'Investigaci\u00f3n de Incidentes' },
-        { key:'trabajoCampo', label:'Trabajo de Campo Operativo' },
-        { key:'capacitacionSST', label:'Capacitaci\u00f3n en SST' },
-        { key:'gestionAmbiental', label:'Gesti\u00f3n Ambiental' },
-        { key:'auditoriaVerificacion', label:'Auditor\u00eda y Verificaci\u00f3n' },
-        { key:'cumplimientoLegal', label:'Cumplimiento Legal' }
-    ];
+    var reqLabels = cfg.reqLabels;
+
     function ec(p) { return p >= 75 ? ['\u00d3ptimo','#198754'] : p >= 55 ? ['Adecuado','#0d6efd'] : p >= 40 ? ['En Desarrollo','#fd7e14'] : ['Insuficiente','#dc3545']; }
     function nc(p) { return p >= 75 ? {c:'#198754',l:'Alto'} : p >= 55 ? {c:'#0d6efd',l:'Medio-Alto'} : p >= 40 ? {c:'#fd7e14',l:'Medio'} : {c:'#6c757d',l:'Bajo'}; }
     var logo = await _logoData();
+
     var dimBars = dims.map(function(d) {
         var p = percentiles[d.key] || 0;
         var n = nc(p);
@@ -118,14 +98,17 @@ async function _buildDISC(resultado) {
             + '<div style="width:42px;text-align:right;font-weight:700;font-size:0.9rem;color:#333">' + p + '%</div>'
             + '<div style="width:90px;font-size:0.75rem;color:#777">' + n.l + '</div></div>';
     }).join('');
+
+    var interpFn = cfg.interpretaciones;
     var interpItems = dims.map(function(d) {
         var p = percentiles[d.key] || 0;
         var n = nc(p);
-        var fn = { D:getInterpretacionD, I:getInterpretacionI, S:getInterpretacionS, C:getInterpretacionC }[d.key];
+        var fn = interpFn[d.key];
         return '<div style="border-radius:8px;padding:14px 18px;margin-bottom:10px;border-left:4px solid ' + d.color + ';background:' + d.bg + '">'
             + '<div style="font-weight:700;font-size:0.9rem;margin-bottom:4px">' + d.key + ' \u00b7 ' + d.label + ' \u2014 ' + p + '% (' + n.l + ')</div>'
             + '<p style="font-size:0.85rem;color:#555;margin:0">' + fn(p) + '</p></div>';
     }).join('');
+
     var compatRows = reqLabels.map(function(r) {
         var p = compatibilidad[r.key] || 0;
         var ev = ec(p);
@@ -134,13 +117,17 @@ async function _buildDISC(resultado) {
             + '<td style="color:' + ev[1] + ';font-weight:700;font-size:0.85rem;padding:5px 8px;border:1px solid #dee2e6">' + ev[0] + '</td>'
             + '<td style="font-size:0.85rem;padding:5px 8px;border:1px solid #dee2e6"><div style="height:8px;border-radius:4px;background:#e9ecef"><div style="height:8px;border-radius:4px;width:' + p + '%;background:' + ev[1] + '"></div></div></td></tr>';
     }).join('');
+
     var fortHTML = (analisis.fortalezas || []).length > 0
         ? '<ul style="margin:0;padding-left:20px;font-size:0.9rem">' + analisis.fortalezas.map(function(f){return '<li style="margin-bottom:5px">'+f+'</li>';}).join('') + '</ul>'
-        : '<p style="font-size:0.85rem;color:#6c757d;margin:0">No se identificaron fortalezas destacadas con los umbrales actuales.</p>';
+        : '<p style="font-size:0.85rem;color:#6c757d;margin:0">No se identificaron fortalezas destacadas.</p>';
     var areasHTML = (analisis.areasDesarrollo || []).length > 0
         ? '<ul style="margin:0;padding-left:20px;font-size:0.9rem">' + analisis.areasDesarrollo.map(function(a){return '<li style="margin-bottom:5px">'+a+'</li>';}).join('') + '</ul>'
         : '<p style="font-size:0.85rem;color:#6c757d;margin:0">No se identificaron \u00e1reas cr\u00edticas de mejora.</p>';
-    var recHTML = getRecomendaciones(analisis).map(function(r,i){return '<li style="margin-bottom:5px">'+r+'</li>';}).join('');
+
+    var recs = cfg.getRecomendaciones(analisis);
+    var recHTML = recs.map(function(r,i){return '<li style="margin-bottom:5px">'+r+'</li>';}).join('');
+
     return '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:20px;font-family:Arial,Helvetica,sans-serif;background:#fff;color:#333">'
         + '<div style="background:linear-gradient(135deg,#1a3a5c,#2563a8);color:#fff;border-radius:10px;padding:20px 28px;margin-bottom:28px;display:flex;align-items:center;gap:20px">'
             + '<img src="' + logo + '" style="width:90px;border-radius:6px;background:#fff;padding:4px" onerror="this.style.display=\'none\'">'
@@ -164,11 +151,9 @@ async function _buildDISC(resultado) {
             + '<div style="font-size:1.15rem;font-weight:800;color:#3730a3;margin-bottom:6px">' + perfilNombre + '</div>'
             + '<p style="font-size:0.9rem;color:#4b5563;margin:0">' + (perfilDesc||'Perfil evaluado con base en el modelo DISC de comportamiento laboral.') + '</p></div></div>'
         + '<div style="margin-bottom:24px">'
-            + '<div style="font-size:1rem;font-weight:700;color:#1a3a5c;border-bottom:2px solid #e5e7eb;padding-bottom:8px;margin-bottom:16px">Resultados por Dimensi\u00f3n DISC</div>'
-            + dimBars + '</div>'
+            + '<div style="font-size:1rem;font-weight:700;color:#1a3a5c;border-bottom:2px solid #e5e7eb;padding-bottom:8px;margin-bottom:16px">Resultados por Dimensi\u00f3n DISC</div>' + dimBars + '</div>'
         + '<div style="margin-bottom:24px">'
-            + '<div style="font-size:1rem;font-weight:700;color:#1a3a5c;border-bottom:2px solid #e5e7eb;padding-bottom:8px;margin-bottom:16px">Interpretaci\u00f3n por Dimensi\u00f3n</div>'
-            + interpItems + '</div>'
+            + '<div style="font-size:1rem;font-weight:700;color:#1a3a5c;border-bottom:2px solid #e5e7eb;padding-bottom:8px;margin-bottom:16px">Interpretaci\u00f3n por Dimensi\u00f3n</div>' + interpItems + '</div>'
         + '<div style="margin-bottom:24px">'
             + '<div style="font-size:1rem;font-weight:700;color:#1a3a5c;border-bottom:2px solid #e5e7eb;padding-bottom:8px;margin-bottom:16px">Compatibilidad con el Cargo: ' + CARGO + '</div>'
             + '<table style="width:100%;border-collapse:collapse;margin-bottom:16px">'
@@ -203,6 +188,7 @@ async function _buildDISC(resultado) {
 
 function _buildTecnico(ta) {
     if (!ta) return '';
+    var cfg = getCargoConfig();
     var tBg = ta.porcentaje >= 70 ? '#198754' : ta.porcentaje >= 50 ? '#fd7e14' : '#dc3545';
     var catRows = Object.values(ta.categorias || {}).map(function(cat) {
         var p = cat.porcentaje;
@@ -213,7 +199,7 @@ function _buildTecnico(ta) {
             + '<td style="font-size:0.85rem;padding:5px 8px;border:1px solid #dee2e6"><div style="height:8px;border-radius:4px;background:#e9ecef"><div style="height:8px;border-radius:4px;width:' + p + '%;background:' + cb + '"></div></div></td></tr>';
     }).join('');
     return '<div style="margin-top:32px;padding-top:20px;border-top:2px solid #e5e7eb">'
-        + '<div style="font-size:1rem;font-weight:700;color:#1a3a5c;border-bottom:2px solid #e5e7eb;padding-bottom:8px;margin-bottom:16px">Resultados Evaluaci\u00f3n T\u00e9cnica SIG</div>'
+        + '<div style="font-size:1rem;font-weight:700;color:#1a3a5c;border-bottom:2px solid #e5e7eb;padding-bottom:8px;margin-bottom:16px">' + cfg.tecnicoSectionTitle + '</div>'
         + '<div style="text-align:center;margin-bottom:20px">'
             + '<span style="display:inline-block;font-size:1rem;padding:8px 22px;border-radius:20px;font-weight:700;background:' + tBg + ';color:#fff">' + ta.veredicto + '</span>'
             + '<div style="margin-top:8px;color:#6c757d;font-size:0.82rem">Puntaje: <strong>' + ta.puntaje + '/' + ta.total + '</strong> (' + ta.porcentaje + '%)</div></div>'
@@ -226,8 +212,6 @@ function _buildTecnico(ta) {
         + '<p style="font-size:0.9rem;color:#555">' + (ta.recomendacion||'') + '</p></div>';
 }
 
-// ======================== PDF generators ========================
-
 async function generarPDF(resultado) {
     try {
         var html = await _buildDISC(resultado);
@@ -236,365 +220,161 @@ async function generarPDF(resultado) {
         var doc = new jsPDF();
         _agregarCanvasPDF(canvas, doc);
         doc.save('InformeDISC_' + (resultado.cedula || 'SN') + '_' + new Date().toISOString().split('T')[0] + '.pdf');
-    } catch (e) {
-        console.error('Error en generarPDF:', e);
-        alert('Error al generar PDF: ' + (e.message || e));
-    }
+    } catch (e) { console.error('Error:', e); alert('Error al generar PDF: ' + (e.message || e)); }
 }
 
 async function generarPDFCompleto(discResult, tecResult) {
     try {
         var html = await _buildDISC(discResult);
-        if (tecResult && tecResult.analysis) {
-            html += _buildTecnico(tecResult.analysis);
-        }
+        if (tecResult && tecResult.analysis) { html += _buildTecnico(tecResult.analysis); }
         var canvas = await _capturarHTML(html, 800);
         var { jsPDF } = window.jspdf;
         var doc = new jsPDF();
         _agregarCanvasPDF(canvas, doc);
         doc.save('InformeCompleto_' + (discResult.cedula || 'SN') + '_' + new Date().toISOString().split('T')[0] + '.pdf');
-    } catch (e) {
-        console.error('Error en generarPDFCompleto:', e);
-        alert('Error al generar PDF completo: ' + (e.message || e));
-    }
-}
-
-function getInterpretacionD(percentil) {
-    if (percentil >= 80) return 'Perfil altamente orientado a resultados. Toma decisiones rápidas y asume el control de situaciones complejas. Ideal para liderar proyectos desafiantes y gestionar múltiples frentes de trabajo simultáneamente.';
-    if (percentil >= 60) return 'Capacidad de liderazgo bien desarrollada. Balance entre toma de decisiones y consideración de alternativas. Adecuado para coordinar proyectos con objetivos ambiciosos y equipos geográficamente dispersos.';
-    if (percentil >= 40) return 'Enfoque moderado hacia resultados. Puede requerir impulso adicional en situaciones de alta presión o urgencia. Se beneficia de entornos que permitan análisis antes de actuar.';
-    return 'Preferencia por trabajar con información detallada antes de tomar decisiones. Puede mostrarse cauteloso ante cambios rápidos. Se recomienda acompañamiento en entornos muy dinámicos.';
-}
-
-function getInterpretacionI(percentil) {
-    if (percentil >= 80) return 'Excelentes habilidades interpersonales. Comunicación efectiva con equipos y stakeholders. Ideal para negociaciones con clientes y motivación de equipos operativos en múltiples zonas.';
-    if (percentil >= 60) return 'Buena capacidad de comunicación. Se relaciona bien con diferentes perfiles. Adecuado para mantener relaciones con clientes y equipos en múltiples ubicaciones geográficas.';
-    if (percentil >= 40) return 'Comunicación funcional pero no su principal fortaleza. Puede preferir trabajar con datos y hechos concretos. Se recomienda enfocarlo en interacción con equipos ya conocidos.';
-    return 'Perfil más reservado en interacción social. Prefiere trabajar con información concreta y estructurada. Puede requerir apoyo en situaciones que exijan networking o comunicación extensiva.';
-}
-
-function getInterpretacionS(percentil) {
-    if (percentil >= 80) return 'Alta estabilidad y compromiso sostenido. Ideal para proyectos de largo plazo y equipos que requieren consistencia. Muy leal con procedimientos y estándares establecidos.';
-    if (percentil >= 60) return 'Buen balance entre estabilidad y flexibilidad. Comprometido con equipos y tareas asignadas. Puede adaptarse a cambios cuando se explica claramente el objetivo.';
-    if (percentil >= 40) return 'Estabilidad moderada. Puede mostrar impaciencia con cambios muy frecuentes. Requiere entornos con cierta predictibilidad para lograr su máximo rendimiento.';
-    return 'Alta adaptabilidad al cambio. Prefiere variedad en tareas y proyectos nuevos. Puede aburrirse con trabajos rutinarios. Se adapta muy bien a entornos dinámicos y cambiantes.';
-}
-
-function getInterpretacionC(percentil) {
-    if (percentil >= 80) return 'Enfoque excepcional en calidad y precisión. Seguimiento riguroso de procedimientos y estándares normativos. Ideal para velar por cumplimiento contractual y exactitud en informes.';
-    if (percentil >= 60) return 'Buen equilibrio entre calidad y eficiencia operativa. Sigue procedimientos correctamente mientras busca soluciones prácticas. Adecuado para control de calidad en proyectos.';
-    if (percentil >= 40) return 'Atención a detalles funcional. Puede ocasionalmente pasar por alto aspectos críticos. Se beneficia de listas de verificación y procesos de revisión formales.';
-    return 'Enfoque en visión general más que en detalles específicos. Pragmático en búsqueda de soluciones. Puede requerir sistemas de control adicionales para garantizar el cumplimiento normativo.';
-}
-
-function getRecomendaciones(analisis) {
-    const recs = [];
-    const p = analisis?.percentiles || {};
-    const c = analisis?.compatibilidad || {};
-    if (p.D < 55) recs.push('Fortalecer el liderazgo en seguridad para hacer cumplir normas y detener trabajos inseguros con firmeza.');
-    if (p.I < 55) recs.push('Capacitación en comunicación asertiva y técnicas de sensibilización para programas de SST.');
-    if (p.S < 55) recs.push('Desarrollar constancia en seguimiento de planes de acción y trabajo de campo sostenido en zonas operativas.');
-    if (p.C < 55) recs.push('Fortalecer el rigor documental, conocimiento normativo y atención al detalle en informes HSEQ.');
-    if ((c.conocimientoNormativo || 0) < 65) recs.push('Formación en legislación SST colombiana (Decreto 1072, Resolución 0312) y normas ISO.');
-    if ((c.investigacionIncidentes || 0) < 65) recs.push('Entrenamiento en metodologías de investigación de incidentes y análisis de causalidad.');
-    if ((c.capacitacionSST || 0) < 65) recs.push('Desarrollo de habilidades como facilitador en capacitaciones y charlas de seguridad.');
-    if (recs.length === 0) {
-        recs.push('Mantener las buenas prácticas identificadas en la evaluación conductual HSEQ.');
-        recs.push('Realizar seguimiento periódico del desempeño en el cargo de Analista SIG.');
-        recs.push('Explorar roles de mayor responsabilidad en gestión HSEQ aprovechando el perfil comportamental sólido.');
-    }
-    return recs.slice(0, 6);
-}
-
-async function cargarResultadoYMostrar() {
-    const params = new URLSearchParams(window.location.search);
-    const cedula = params.get('cedula');
-    if (!cedula) {
-        document.getElementById('resultado-container').innerHTML = '<p class="alert alert-danger">No se proporciono cedula</p>';
-        return;
-    }
-    const resultado = await obtenerResultados(cedula);
-    if (!resultado) {
-        document.getElementById('resultado-container').innerHTML = '<p class="alert alert-danger">No se encontraron resultados para esta cedula</p>';
-        return;
-    }
-    mostrarResultado(resultado);
+    } catch (e) { console.error('Error:', e); alert('Error al generar PDF: ' + (e.message || e)); }
 }
 
 function mostrarResultado(resultado) {
-    const container = document.getElementById('resultado-container');
-    const analisis  = resultado.analisis || {};
-    const percentiles = analisis.percentiles || { D: 0, I: 0, S: 0, C: 0 };
-    const compatibilidad = analisis.compatibilidad || {};
+    var cfg = getCargoConfig();
+    var container = document.getElementById('resultado-container');
+    var analisis = resultado.analisis || {};
+    var percentiles = analisis.percentiles || { D:0, I:0, S:0, C:0 };
+    var compatibilidad = analisis.compatibilidad || {};
+    var promedioGeneral = Object.keys(compatibilidad).length > 0
+        ? Object.values(compatibilidad).reduce(function(a,b) { return a+b; }, 0) / Object.keys(compatibilidad).length : 0;
 
-    const promedioGeneral = Object.keys(compatibilidad).length > 0
-        ? Object.values(compatibilidad).reduce((a, b) => a + b, 0) / Object.keys(compatibilidad).length
-        : 0;
-
-    let vClass = 'bg-secondary', vText = 'En Proceso';
-    if      (promedioGeneral >= 75) { vClass = 'bg-success'; vText = 'APTO'; }
+    var vClass = 'bg-secondary', vText = 'En Proceso';
+    if (promedioGeneral >= 75) { vClass = 'bg-success'; vText = 'APTO'; }
     else if (promedioGeneral >= 55) { vClass = 'bg-info text-dark'; vText = 'APTO CON DESARROLLO'; }
-    else if (promedioGeneral >= 40) { vClass = 'bg-warning text-dark'; vText = 'REQUIERE EVALUACIÓN ADICIONAL'; }
-    else if (promedioGeneral > 0)   { vClass = 'bg-danger'; vText = 'NO RECOMENDADO'; }
+    else if (promedioGeneral >= 40) { vClass = 'bg-warning text-dark'; vText = 'REQUIERE EVALUACI\u00d3N ADICIONAL'; }
+    else if (promedioGeneral > 0) { vClass = 'bg-danger'; vText = 'NO RECOMENDADO'; }
 
-    const perfilNombre = analisis.perfil || analisis.estilo || 'N/A';
-    const perfilDesc   = analisis.descripcionEstilo || analisis.estilo || '';
-    const fecha = new Date(resultado.fecha).toLocaleDateString('es-CO', {
-        year: 'numeric', month: 'long', day: 'numeric'
-    });
+    var perfilNombre = analisis.perfil || analisis.estilo || 'N/A';
+    var perfilDesc = analisis.descripcionEstilo || analisis.estilo || '';
+    var fecha = new Date(resultado.fecha).toLocaleDateString('es-CO', { year:'numeric', month:'long', day:'numeric' });
+    var interpFn = cfg.interpretaciones;
 
-    const dims = [
-        { key: 'D', label: 'Dominancia',        interp: getInterpretacionD },
-        { key: 'I', label: 'Influencia',         interp: getInterpretacionI },
-        { key: 'S', label: 'Estabilidad',        interp: getInterpretacionS },
-        { key: 'C', label: 'Conscienciosidad',   interp: getInterpretacionC },
+    var dims = [
+        { key:'D', label:'Dominancia', interp: interpFn.D },
+        { key:'I', label:'Influencia', interp: interpFn.I },
+        { key:'S', label:'Estabilidad', interp: interpFn.S },
+        { key:'C', label:'Conscienciosidad', interp: interpFn.C }
     ];
 
-    function nivelClase(p) {
-        if (p >= 75) return 'alto';
-        if (p >= 55) return 'medio-alto';
-        if (p >= 40) return 'medio';
-        return 'bajo';
-    }
-    function nivelLabel(p) {
-        if (p >= 75) return 'Alto';
-        if (p >= 55) return 'Medio-Alto';
-        if (p >= 40) return 'Medio';
-        return 'Bajo';
-    }
+    function nlClase(p) { return p >= 75 ? 'alto' : p >= 55 ? 'medio-alto' : p >= 40 ? 'medio' : 'bajo'; }
+    function nlLabel(p) { return p >= 75 ? 'Alto' : p >= 55 ? 'Medio-Alto' : p >= 40 ? 'Medio' : 'Bajo'; }
+    function evalLabel(p) { return p >= 75 ? ['\u00d3ptimo','nivel-optimo'] : p >= 55 ? ['Adecuado','nivel-adecuado'] : p >= 40 ? ['En Desarrollo','nivel-desarrollo'] : ['Insuficiente','nivel-insuficiente']; }
+    function barColor(p) { return p >= 75 ? '#198754' : p >= 55 ? '#0d6efd' : p >= 40 ? '#fd7e14' : '#6c757d'; }
 
-    const reqLabels = {
-        conocimientoNormativo: 'Conocimiento Normativo SST',
-        liderazgoSeguridad: 'Liderazgo en Seguridad',
-        gestionSST: 'Gestión del SG-SST',
-        comunicacionRiesgos: 'Comunicación de Riesgos',
-        investigacionIncidentes: 'Investigación de Incidentes',
-        trabajoCampo: 'Trabajo de Campo Operativo',
-        capacitacionSST: 'Capacitación en SST',
-        gestionAmbiental: 'Gestión Ambiental',
-        auditoriaVerificacion: 'Auditoría y Verificación',
-        cumplimientoLegal: 'Cumplimiento Legal'
-    };
+    var recomendaciones = cfg.getRecomendaciones(analisis);
 
-    function evalLabel(p) {
-        if (p >= 75) return ['Óptimo', 'nivel-optimo'];
-        if (p >= 55) return ['Adecuado', 'nivel-adecuado'];
-        if (p >= 40) return ['En Desarrollo', 'nivel-desarrollo'];
-        return ['Insuficiente', 'nivel-insuficiente'];
-    }
+    var reqLabelMap = {};
+    cfg.reqLabels.forEach(function(r) { reqLabelMap[r.key] = r.label; });
 
-    function barColor(p) {
-        if (p >= 75) return '#198754';
-        if (p >= 55) return '#0d6efd';
-        if (p >= 40) return '#fd7e14';
-        return '#6c757d';
-    }
+    container.innerHTML = '<div class="resultado-card">'
+        + '<div class="resultado-header"><img src="../Sin-titulo-1.png" alt="MARYTER" id="logo-image" onerror="this.style.display=\'none\'">'
+        + '<div><h3>DRAGADOS MAR Y TER \u00b7 MARYTER S.A.S</h3><p>Informe de Evaluaci\u00f3n Comportamental DISC<br><strong>Cargo evaluado:</strong> ' + cfg.cargoFormal + '</p></div></div>'
+        + '<div class="text-center mb-4"><span class="badge badge-veredicto ' + vClass + '">' + vText + '</span>'
+        + '<div class="mt-2 text-muted" style="font-size:0.82rem;">Compatibilidad general con el cargo: <strong>' + Math.round(promedioGeneral) + '%</strong></div></div>'
+        + '<h6 class="section-title">Datos del Candidato</h6>'
+        + '<div class="datos-grid mb-4">'
+        + '<div class="dato"><strong>Nombre:</strong> ' + (resultado.nombre||'No disponible') + '</div>'
+        + '<div class="dato"><strong>C\u00e9dula:</strong> ' + (resultado.cedula||'No disponible') + '</div>'
+        + '<div class="dato"><strong>Correo:</strong> ' + (resultado.email||'No registrado') + '</div>'
+        + '<div class="dato"><strong>Fecha de evaluaci\u00f3n:</strong> ' + fecha + '</div>'
+        + '<div class="dato"><strong>Cargo:</strong> ' + cfg.cargoFormal + '</div>'
+        + '<div class="dato"><strong>Perfil DISC:</strong> ' + perfilNombre + '</div></div>'
+        + '<h6 class="section-title">Perfil Comportamental</h6>'
+        + '<div class="perfil-box mb-4"><div class="perfil-nombre">' + perfilNombre + '</div>'
+        + '<p class="perfil-desc">' + (perfilDesc||'Perfil evaluado con base en el modelo DISC de comportamiento laboral.') + '</p></div>'
+        + '<h6 class="section-title">Resultados por Dimensi\u00f3n DISC</h6>'
+        + '<div class="mb-4">' + dims.map(function(d) {
+            var p = percentiles[d.key] || 0, cls = nlClase(p);
+            return '<div class="disc-row"><div class="disc-letter ' + d.key + '">' + d.key + '</div>'
+                + '<div class="disc-label">' + d.label + '</div>'
+                + '<div class="disc-bar-outer"><div class="disc-bar-inner ' + cls + '" style="width:' + p + '%">' + (p > 10 ? p + '%' : '') + '</div></div>'
+                + '<div class="disc-pct">' + p + '%</div><div class="disc-nivel">' + nlLabel(p) + '</div></div>';
+        }).join('') + '</div>'
+        + '<h6 class="section-title">Interpretaci\u00f3n por Dimensi\u00f3n</h6>'
+        + '<div class="mb-4">' + dims.map(function(d) {
+            var p = percentiles[d.key] || 0;
+            return '<div class="interp-item ' + d.key + '"><div class="interp-title">' + d.key + ' \u00b7 ' + d.label + ' \u2014 ' + p + '% (' + nlLabel(p) + ')</div>'
+                + '<p class="interp-text">' + d.interp(p) + '</p></div>';
+        }).join('') + '</div>'
+        + '<h6 class="section-title">Compatibilidad con el Cargo: ' + cfg.cargoFormal + '</h6>'
+        + '<div class="table-responsive mb-4"><table class="table table-bordered table-sm compat-table">'
+        + '<thead><tr><th>Competencia / Requisito</th><th style="width:90px">Percentil</th><th style="width:180px">Nivel</th><th>Barra</th></tr></thead><tbody>'
+        + Object.entries(reqLabelMap).map(function(entry) {
+            var key = entry[0], label = entry[1];
+            var p = compatibilidad[key] || 0;
+            var ev = evalLabel(p);
+            return '<tr><td>' + label + '</td><td class="text-center fw-bold">' + p + '%</td><td class="' + ev[1] + '">' + ev[0] + '</td>'
+                + '<td><div class="mini-bar"><div class="mini-bar-fill" style="width:' + p + '%;background:' + barColor(p) + '"></div></div></td></tr>';
+        }).join('')
+        + '<tr class="table-dark"><td><strong>Promedio General</strong></td><td class="text-center fw-bold">' + Math.round(promedioGeneral) + '%</td>'
+        + '<td class="' + evalLabel(promedioGeneral)[1] + '">' + evalLabel(promedioGeneral)[0] + '</td>'
+        + '<td><div class="mini-bar"><div class="mini-bar-fill" style="width:' + Math.round(promedioGeneral) + '%;background:' + barColor(promedioGeneral) + '"></div></div></td></tr>'
+        + '</tbody></table></div>'
+        + '<h6 class="section-title">An\u00e1lisis de Competencias</h6>'
+        + '<div class="row mb-4"><div class="col-md-6 mb-3"><div class="fortalezas-card h-100"><h6>\u2705 Fortalezas Identificadas</h6>'
+        + ((analisis.fortalezas || []).length > 0
+            ? '<ul class="ps-3 mb-0">' + analisis.fortalezas.map(function(f){return '<li>' + f + '</li>';}).join('') + '</ul>'
+            : '<p class="text-muted mb-0" style="font-size:0.85rem">No se identificaron fortalezas destacadas.</p>')
+        + '</div></div><div class="col-md-6 mb-3"><div class="desarrollo-card h-100"><h6>\ud83d\udd27 \u00c1reas de Desarrollo</h6>'
+        + ((analisis.areasDesarrollo || []).length > 0
+            ? '<ul class="ps-3 mb-0">' + analisis.areasDesarrollo.map(function(a){return '<li>' + a + '</li>';}).join('') + '</ul>'
+            : '<p class="text-muted mb-0" style="font-size:0.85rem">No se identificaron \u00e1reas cr\u00edticas de mejora.</p>')
+        + '</div></div></div>'
+        + '<h6 class="section-title">Recomendaciones para el Evaluador</h6>'
+        + '<div class="mb-4"><ol class="ps-3" style="font-size:0.9rem;">' + recomendaciones.map(function(r){return '<li class="mb-2">' + r + '</li>';}).join('') + '</ol></div>'
+        + '<div class="recomendacion-box mb-4"><h6>\ud83d\udccb Concepto Final</h6><p>' + (analisis.recomendacion||'Sin recomendaci\u00f3n disponible.') + '</p></div>'
+        + '<div class="text-center mt-3"><button class="btn btn-success btn-lg px-5" onclick="descargarPDFResultado(\'' + resultado.cedula + '\')">\ud83d\udcc4 Descargar Informe PDF</button></div></div>';
 
-    const recomendaciones = getRecomendaciones(analisis);
-
-    container.innerHTML = `
-    <div class="resultado-card">
-        <div class="resultado-header">
-            <img src="Sin-titulo-1.png" alt="MARYTER" id="logo-image"
-                 onerror="this.style.display='none'">
-            <div>
-                <h3>DRAGADOS MAR Y TER · MARYTER S.A.S</h3>
-                <p>Informe de Evaluación Comportamental DISC<br>
-                    <strong>Cargo evaluado:</strong> Analista SIG</p>
-            </div>
-        </div>
-
-        <div class="text-center mb-4">
-            <span class="badge badge-veredicto ${vClass}">${vText}</span>
-            <div class="mt-2 text-muted" style="font-size:0.82rem;">
-                Compatibilidad general con el cargo: <strong>${Math.round(promedioGeneral)}%</strong>
-            </div>
-        </div>
-
-        <h6 class="section-title">Datos del Candidato</h6>
-        <div class="datos-grid mb-4">
-            <div class="dato"><strong>Nombre:</strong> ${resultado.nombre || 'No disponible'}</div>
-            <div class="dato"><strong>Cédula:</strong> ${resultado.cedula || 'No disponible'}</div>
-            <div class="dato"><strong>Correo:</strong> ${resultado.email || 'No registrado'}</div>
-            <div class="dato"><strong>Fecha de evaluación:</strong> ${fecha}</div>
-                <div class="dato"><strong>Cargo:</strong> Analista SIG</div>
-            <div class="dato"><strong>Perfil DISC:</strong> ${perfilNombre}</div>
-        </div>
-
-        <h6 class="section-title">Perfil Comportamental</h6>
-        <div class="perfil-box mb-4">
-            <div class="perfil-nombre">${perfilNombre}</div>
-            <p class="perfil-desc">${perfilDesc || 'Perfil evaluado con base en el modelo DISC de comportamiento laboral.'}</p>
-        </div>
-
-        <h6 class="section-title">Resultados por Dimensión DISC</h6>
-        <div class="mb-4">
-            ${dims.map(d => {
-                const p = percentiles[d.key] || 0;
-                const cls = nivelClase(p);
-                return `
-                <div class="disc-row">
-                    <div class="disc-letter ${d.key}">${d.key}</div>
-                    <div class="disc-label">${d.label}</div>
-                    <div class="disc-bar-outer">
-                        <div class="disc-bar-inner ${cls}" style="width:${p}%">${p > 10 ? p + '%' : ''}</div>
-                    </div>
-                    <div class="disc-pct">${p}%</div>
-                    <div class="disc-nivel">${nivelLabel(p)}</div>
-                </div>`;
-            }).join('')}
-        </div>
-
-        <h6 class="section-title">Interpretación por Dimensión</h6>
-        <div class="mb-4">
-            ${dims.map(d => {
-                const p = percentiles[d.key] || 0;
-                return `
-                <div class="interp-item ${d.key}">
-                    <div class="interp-title">${d.key} · ${d.label} — ${p}% (${nivelLabel(p)})</div>
-                    <p class="interp-text">${d.interp(p)}</p>
-                </div>`;
-            }).join('')}
-        </div>
-
-        <h6 class="section-title">Compatibilidad con el Cargo: Analista SIG</h6>
-        <div class="table-responsive mb-4">
-            <table class="table table-bordered table-sm compat-table">
-                <thead>
-                    <tr>
-                        <th>Competencia / Requisito</th>
-                        <th style="width:90px">Percentil</th>
-                        <th style="width:180px">Nivel</th>
-                        <th>Barra</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${Object.entries(reqLabels).map(([key, label]) => {
-                        const p = compatibilidad[key] || 0;
-                        const [ev, ec] = evalLabel(p);
-                        return `
-                        <tr>
-                            <td>${label}</td>
-                            <td class="text-center fw-bold">${p}%</td>
-                            <td class="${ec}">${ev}</td>
-                            <td>
-                                <div class="mini-bar">
-                                    <div class="mini-bar-fill" style="width:${p}%;background:${barColor(p)}"></div>
-                                </div>
-                            </td>
-                        </tr>`;
-                    }).join('')}
-                    <tr class="table-dark">
-                        <td><strong>Promedio General</strong></td>
-                        <td class="text-center fw-bold">${Math.round(promedioGeneral)}%</td>
-                        <td class="${evalLabel(promedioGeneral)[1]}">${evalLabel(promedioGeneral)[0]}</td>
-                        <td>
-                            <div class="mini-bar">
-                                <div class="mini-bar-fill" style="width:${Math.round(promedioGeneral)}%;background:${barColor(promedioGeneral)}"></div>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <h6 class="section-title">Análisis de Competencias</h6>
-        <div class="row mb-4">
-            <div class="col-md-6 mb-3">
-                <div class="fortalezas-card h-100">
-                    <h6>✅ Fortalezas Identificadas</h6>
-                    ${(analisis.fortalezas || []).length > 0
-                        ? '<ul class="ps-3 mb-0">' + analisis.fortalezas.map(f => '<li>' + f + '</li>').join('') + '</ul>'
-                        : '<p class="text-muted mb-0" style="font-size:0.85rem">No se identificaron fortalezas destacadas con los umbrales actuales.</p>'
-                    }
-                </div>
-            </div>
-            <div class="col-md-6 mb-3">
-                <div class="desarrollo-card h-100">
-                    <h6>🔧 Áreas de Desarrollo</h6>
-                    ${(analisis.areasDesarrollo || []).length > 0
-                        ? '<ul class="ps-3 mb-0">' + analisis.areasDesarrollo.map(a => '<li>' + a + '</li>').join('') + '</ul>'
-                        : '<p class="text-muted mb-0" style="font-size:0.85rem">No se identificaron áreas críticas de mejora.</p>'
-                    }
-                </div>
-            </div>
-        </div>
-
-        <h6 class="section-title">Recomendaciones para el Evaluador</h6>
-        <div class="mb-4">
-            <ol class="ps-3" style="font-size:0.9rem;">
-                ${recomendaciones.map(r => '<li class="mb-2">' + r + '</li>').join('')}
-            </ol>
-        </div>
-
-        <div class="recomendacion-box mb-4">
-            <h6>📋 Concepto Final</h6>
-            <p>${analisis.recomendacion || 'Sin recomendación disponible.'}</p>
-        </div>
-
-        <div class="text-center mt-3">
-            <button class="btn btn-success btn-lg px-5" onclick="descargarPDFResultado('${resultado.cedula}')">
-                📄 Descargar Informe PDF
-            </button>
-        </div>
-    </div>`;
-    
-    // Append technical results if available
     if (resultado.tecnico && resultado.tecnico.analisis) {
-        const ta = resultado.tecnico.analisis;
-        const tVClass = ta.porcentaje >= 70 ? 'bg-success' : ta.porcentaje >= 50 ? 'bg-warning text-dark' : 'bg-danger';
-        
-        const techDiv = document.createElement('div');
+        var ta = resultado.tecnico.analisis;
+        var tVClass = ta.porcentaje >= 70 ? 'bg-success' : ta.porcentaje >= 50 ? 'bg-warning text-dark' : 'bg-danger';
+        var techDiv = document.createElement('div');
         techDiv.className = 'resultado-card';
         techDiv.style.marginTop = '20px';
-        techDiv.innerHTML = `
-            <h6 class="section-title">Resultados Evaluación Técnica SIG</h6>
-            <div class="text-center mb-4">
-                <span class="badge badge-veredicto ${tVClass}">${ta.veredicto}</span>
-                <div class="mt-2 text-muted" style="font-size:0.82rem;">
-                    Puntaje: <strong>${ta.puntaje}/${ta.total}</strong> (${ta.porcentaje}%)
-                </div>
-            </div>
-            <div class="table-responsive mb-3">
-                <table class="table table-bordered table-sm compat-table">
-                    <thead>
-                        <tr>
-                            <th>Categoria</th>
-                            <th style="width:80px">Aciertos</th>
-                            <th style="width:80px">%</th>
-                            <th style="width:150px">Barra</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${Object.values(ta.categorias).map(cat => {
-                            const p = cat.porcentaje;
-                            const barColor = p >= 70 ? '#198754' : p >= 50 ? '#fd7e14' : '#dc3545';
-                            return '<tr>' +
-                                '<td>' + cat.label + '</td>' +
-                                '<td class="text-center fw-bold">' + cat.aciertos + '/' + cat.total + '</td>' +
-                                '<td class="text-center fw-bold">' + p + '%</td>' +
-                                '<td>' +
-                                '<div class="mini-bar"><div class="mini-bar-fill" style="width:' + p + '%;background:' + barColor + '"></div></div>' +
-                                '</td></tr>';
-                        }).join('')}
-                    </tbody>
-                </table>
-            </div>
-            <p style="font-size:0.9rem;color:#555;">${ta.recomendacion}</p>
-        `;
+        techDiv.innerHTML = '<h6 class="section-title">' + cfg.tecnicoSectionTitle + '</h6>'
+            + '<div class="text-center mb-4"><span class="badge badge-veredicto ' + tVClass + '">' + ta.veredicto + '</span>'
+            + '<div class="mt-2 text-muted" style="font-size:0.82rem;">Puntaje: <strong>' + ta.puntaje + '/' + ta.total + '</strong> (' + ta.porcentaje + '%)</div></div>'
+            + '<div class="table-responsive mb-3"><table class="table table-bordered table-sm compat-table">'
+            + '<thead><tr><th>Categor\u00eda</th><th style="width:80px">Aciertos</th><th style="width:80px">%</th><th style="width:150px">Barra</th></tr></thead><tbody>'
+            + Object.values(ta.categorias).map(function(cat) {
+                var p = cat.porcentaje;
+                var bc = p >= 70 ? '#198754' : p >= 50 ? '#fd7e14' : '#dc3545';
+                return '<tr><td>' + cat.label + '</td><td class="text-center fw-bold">' + cat.aciertos + '/' + cat.total + '</td>'
+                    + '<td class="text-center fw-bold">' + p + '%</td>'
+                    + '<td><div class="mini-bar"><div class="mini-bar-fill" style="width:' + p + '%;background:' + bc + '"></div></div></td></tr>';
+            }).join('') + '</tbody></table></div>'
+            + '<p style="font-size:0.9rem;color:#555;">' + ta.recomendacion + '</p>';
         container.appendChild(techDiv);
     }
 }
 
 async function descargarPDFResultado(cedula) {
     try {
-        let r = await obtenerResultados(cedula);
+        var r = await obtenerResultados(cedula);
         if (!r) r = window.resultadoGlobal || null;
         if (!r) { alert('Resultado no encontrado'); return; }
-        await generarPDF(r);
-    } catch (e) {
-        console.error('Error en descargarPDFResultado:', e);
-        alert('Error al descargar PDF: ' + (e.message || e));
-    }
+        if (r.tecnico && r.tecnico.analisis) { await generarPDFCompleto(r, r.tecnico); }
+        else { await generarPDF(r); }
+    } catch (e) { console.error('Error:', e); alert('Error al descargar PDF: ' + (e.message || e)); }
 }
 
+async function cargarResultadoYMostrar() {
+    var params = new URLSearchParams(window.location.search);
+    var cedula = params.get('cedula');
+    if (!cedula) {
+        document.getElementById('resultado-container').innerHTML = '<p class="alert alert-danger">No se proporcion\u00f3 c\u00e9dula</p>';
+        return;
+    }
+    var resultado = await obtenerResultados(cedula);
+    if (!resultado) {
+        document.getElementById('resultado-container').innerHTML = '<p class="alert alert-danger">No se encontraron resultados para esta c\u00e9dula</p>';
+        return;
+    }
+    mostrarResultado(resultado);
+}
