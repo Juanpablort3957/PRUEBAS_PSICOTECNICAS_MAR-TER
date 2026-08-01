@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prueba Psicot&eacute;cnica - Asistente de Compras</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="prueba-header">
+                <img src="../Sin-titulo-1.png" alt="MARYTER" id="logo-image" style="width:150px;margin-bottom:15px;">
+                <h3>Prueba Psicot&eacute;cnica</h3>
+                <p style="color:#1a3a5c;font-weight:600;">Asistente de Compras</p>
+                <p id="nombre-candidato"></p>
+            </div>
+            <div id="pregunta-container"></div>
+        </div>
+    </div>
+    <script src="../js/dexie.min.js"></script>
+    <script src="../js/emailjs.min.js"></script>
+    <script src="../js/jspdf.umd.min.js"></script>
+    <script src="../js/html2canvas.min.js"></script>
+    <script>window.CARGO = 'compras';</script>
+    <script src="../js/config.js"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/preguntas_compras.js"></script>
+    <script src="../js/test.js"></script>
+    <script src="../js/pdf.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            var cfg = getCargoConfig(); await initDB();
+            var params = new URLSearchParams(window.location.search), cedula = params.get('cedula');
+            if (!cedula) { alert('No se proporcion&oacute; c&eacute;dula'); window.location.href = cfg.paginaInicio; return; }
+            var candidato = await obtenerCandidato(cedula);
+            if (candidato) document.getElementById('nombre-candidato').textContent = candidato.nombre + ' - ' + cedula;
+            iniciarPrueba(cedula);
+        });
+    </script>
+</body>
+</html>

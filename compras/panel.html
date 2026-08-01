@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Evaluador - Asistente de Compras</title>
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+    <script src="../js/dexie.min.js"></script>
+    <script src="../js/jspdf.umd.min.js"></script>
+    <script src="../js/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div id="login-panel" class="card">
+            <div class="logo-container"><img src="../Sin-titulo-1.png" alt="MARYTER"></div>
+            <h1>Panel del Evaluador</h1>
+            <h5 style="color:#1a3a5c;">Asistente de Compras</h5>
+            <div class="mb-3"><label class="form-label">Contrase&ntilde;a</label><input type="password" class="form-control" id="password" placeholder="Ingrese la contrase&ntilde;a"></div>
+            <button class="btn btn-primary btn-block" onclick="_loginPanel()">Ingresar</button>
+        </div>
+        <div id="panel-contenido" style="display:none;">
+            <div class="panel-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div><h2>Panel del Evaluador - Asistente de Compras</h2><p>MARYTER S.A.S - Gesti&oacute;n de Resultados</p></div>
+                    <div><button class="btn btn-light" onclick="_cambiarPasswordPanel()">Cambiar Contrase&ntilde;a</button><button class="btn btn-outline-light" onclick="cerrarSesion()">Cerrar Sesi&oacute;n</button></div>
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-4"><div class="stats-card"><h3 id="total-candidatos">0</h3><p>Total Evaluados</p></div></div>
+                <div class="col-md-4"><div class="stats-card"><h3 id="completados">0</h3><p>Completados</p></div></div>
+                <div class="col-md-4"><div class="stats-card"><h3 id="pendientes">0</h3><p>Aptos</p></div></div>
+            </div>
+            <div class="card mb-4">
+                <div class="card-body d-flex align-items-center gap-3 flex-wrap">
+                    <label class="fw-bold" style="white-space:nowrap;">URL del sitio:</label>
+                    <input type="url" class="form-control" id="base-url" style="max-width:400px;font-size:0.85rem;" placeholder="https://prueba-coord-hseq.netlify.app/compras" value="https://prueba-coord-hseq.netlify.app/compras">
+                    <small class="text-muted">Link: <span id="preview-link" style="font-weight:600;color:#1a3a5c;">&mdash;</span></small>
+                    <button class="btn btn-outline-secondary btn-sm" onclick="guardarBaseUrl()" title="Guardar URL">&#x1f4be;</button>
+                    <button class="btn btn-outline-success btn-sm" onclick="enviarLinkSeleccionado()" id="btn-enviar-link" disabled title="Enviar link por email">&#x2709; Enviar Link</button>
+                </div>
+            </div>
+            <div class="card">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h4>Lista de Candidatos - Asistente de Compras</h4>
+                    <div class="d-flex gap-2"><input type="date" class="form-control" id="filtro-fecha" onchange="filtrarPorFecha()"><button class="btn btn-secondary" onclick="cargarDatos()">Actualizar</button></div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover"><thead><tr><th>C&eacute;dula</th><th>Nombre</th><th>Fecha</th><th>Estado</th><th>Acciones</th></tr></thead><tbody id="candidatos-lista"><tr><td colspan="5" class="text-center">Cargando...</td></tr></tbody></table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="modal-container"></div>
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script src="../js/emailjs.min.js"></script>
+    <script>window.CARGO = 'compras';</script>
+    <script src="../js/config.js"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/preguntas_compras.js"></script>
+    <script src="../js/panel.js"></script>
+    <script src="../js/pdf.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initDB();
+            var savedUrl = sessionStorage.getItem('base_url'), urlInput = document.getElementById('base-url');
+            if (savedUrl && urlInput) urlInput.value = savedUrl;
+            if (urlInput) urlInput.addEventListener('input', function() { sessionStorage.setItem('base_url', urlInput.value.trim()); });
+            var password = sessionStorage.getItem('evaluador_password');
+            if (password) { var valido = await _verificarPasswordDB(password); if (valido) mostrarPanel(); }
+        });
+        async function _loginPanel() {
+            var password = document.getElementById('password').value;
+            if (!password) { alert('Ingrese la contrase&ntilde;a'); return; }
+            var valido = await _verificarPasswordDB(password);
+            if (valido) { sessionStorage.setItem('evaluador_password', password); mostrarPanel(); }
+            else alert('Contrase&ntilde;a incorrecta');
+        }
+        async function mostrarPanel() { document.getElementById('login-panel').style.display='none'; document.getElementById('panel-contenido').style.display='block'; await cargarDatos(); }
+        function cerrarSesion() { sessionStorage.removeItem('evaluador_password'); window.location.reload(); }
+    </script>
+</body>
+</html>

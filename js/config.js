@@ -360,6 +360,127 @@ var CARGO_CONFIG = {
             { min: 40, text: 'REQUIERE EVALUACI\u00d3N ADICIONAL. El perfil muestra algunas fortalezas pero brechas para el rol de coordinaci\u00f3n HSEQ. Se recomienda entrevista por competencias y verificaci\u00f3n de experiencia t\u00e9cnica.' },
             { min: 0,  text: 'NO RECOMENDADO para el cargo de Coordinador HSEQ. El perfil DISC no muestra la compatibilidad necesaria para liderar sistemas integrados de gesti\u00f3n.' }
         ]
+    },
+
+    compras: {
+        nombre: 'Asistente de Compras',
+        cargoFormal: 'Asistente de Compras',
+        paginaInicio: 'index.html',
+        paginaTest: 'test.html',
+        paginaResultados: 'resultados.html',
+        paginaPanel: 'panel.html',
+        candidatoVeResultados: false,
+        tecnicoSectionTitle: 'Resultados Evaluaci\u00f3n T\u00e9cnica - Asistente de Compras',
+        reqLabels: [
+            { key: 'organizacionDocumental', label: 'Organizaci\u00f3n Documental' },
+            { key: 'atencionProveedores', label: 'Atenci\u00f3n a Proveedores' },
+            { key: 'manejoExcel', label: 'Manejo de Excel y Ofim\u00e1tica' },
+            { key: 'seguimientoDespachos', label: 'Seguimiento de Despachos' },
+            { key: 'elaboracionOC', label: 'Elaboraci\u00f3n de \u00d3rdenes de Compra' },
+            { key: 'controlFacturacion', label: 'Control de Facturaci\u00f3n' },
+            { key: 'comunicacionEfectiva', label: 'Comunicaci\u00f3n Efectiva' },
+            { key: 'trabajoBajoPresion', label: 'Trabajo Bajo Presi\u00f3n' },
+            { key: 'atencionDetalle', label: 'Atenci\u00f3n al Detalle' },
+            { key: 'trabajoEquipo', label: 'Trabajo en Equipo' }
+        ],
+        requisitos: {
+            organizacionDocumental: { dims: ['C', 'S'], peso: 1.0 },
+            atencionProveedores: { dims: ['I', 'S'], peso: 0.9 },
+            manejoExcel: { dims: ['C', 'S'], peso: 0.9 },
+            seguimientoDespachos: { dims: ['S', 'C'], peso: 0.8 },
+            elaboracionOC: { dims: ['C', 'D'], peso: 0.9 },
+            controlFacturacion: { dims: ['C', 'S'], peso: 1.0 },
+            comunicacionEfectiva: { dims: ['I', 'S'], peso: 1.0 },
+            trabajoBajoPresion: { dims: ['D', 'S'], peso: 0.8 },
+            atencionDetalle: { dims: ['C', 'S'], peso: 1.0 },
+            trabajoEquipo: { dims: ['I', 'S'], peso: 0.9 }
+        },
+        perfilesDISC: [
+            { cond: function(d,i,s,c){ return c>=4 && s>=4 && d>=2; },
+              perfil: 'Organizador Met\u00f3dico',
+              estilo: 'Perfil ideal para gesti\u00f3n documental, archivo y seguimiento de procesos. Alta capacidad de organizaci\u00f3n, constancia en tareas repetitivas y rigurosidad en el control de informaci\u00f3n.' },
+            { cond: function(d,i,s,c){ return i>=4 && s>=4; },
+              perfil: 'Comunicador Servicial',
+              estilo: 'Excelente para atenci\u00f3n a proveedores y clientes internos. Habilidad para manejar m\u00faltiples contactos telef\u00f3nicos, coordinar entregas y mantener relaciones cordiales.' },
+            { cond: function(d,i,s,c){ return s>=4 && c>=3 && d>=3; },
+              perfil: 'Ejecutor Confiable',
+              estilo: 'Cumplidor y constante en el seguimiento de tareas administrativas. Responde bien a instrucciones claras y mantiene el ritmo en d\u00edas de alta carga operativa.' },
+            { cond: function(d,i,s,c){ return c>=4 && d>=2 && i>=2; },
+              perfil: 'Analista Detallista',
+              estilo: 'Enfoque en precisi\u00f3n de datos, cruce de facturas vs \u00f3rdenes de compra, y verificaci\u00f3n de informaci\u00f3n. Evita errores en documentaci\u00f3n sensible del \u00e1rea de compras.' },
+            { cond: function(d,i,s,c){ return d>=3 && i>=3 && s>=3 && c>=3; },
+              perfil: 'Integral Administrativo',
+              estilo: 'Perfil vers\u00e1til que combina organizaci\u00f3n, comunicaci\u00f3n y capacidad de ejecuci\u00f3n. Se adapta a diferentes tareas del \u00e1rea de compras con equilibrio.' },
+            { cond: function(d,i,s,c){ return i>=4 && c>=3; },
+              perfil: 'Gestor de Proveedores',
+              estilo: 'H\u00e1bil en la negociaci\u00f3n y comunicaci\u00f3n con proveedores, manteniendo el rigor en la documentaci\u00f3n. Ideal para cotizaciones y seguimiento de \u00f3rdenes.' },
+            { cond: function(d,i,s,c){ return s>=4 && d>=3; },
+              perfil: 'Operador Log\u00edstico',
+              estilo: 'Orientado a la acci\u00f3n y al seguimiento de despachos. Se siente c\u00f3modo haciendo llamadas de coordinaci\u00f3n y verificando entregas con proveedores.' }
+        ],
+        perfilDefault: { perfil: 'Perfil en Desarrollo en Compras', estilo: 'No encaja en perfiles t\u00edpicos de asistencia de compras. Se requiere evaluaci\u00f3n adicional.' },
+        fortalezaDescs: {
+            D: 'Capacidad de ejecuci\u00f3n y resoluci\u00f3n de problemas en el d\u00eda a d\u00eda de compras',
+            I: 'Comunicaci\u00f3n efectiva con proveedores y clientes internos',
+            S: 'Constancia y disciplina en el seguimiento de \u00f3rdenes y archivo documental',
+            C: 'Rigor en el cruce de facturas, control de datos y precisi\u00f3n documental'
+        },
+        areaDescs: {
+            D: 'Desarrollar mayor proactividad en la resoluci\u00f3n de imprevistos con proveedores',
+            I: 'Fortalecer habilidades de comunicaci\u00f3n telef\u00f3nica y negociaci\u00f3n b\u00e1sica',
+            S: 'Mejorar la constancia en tareas repetitivas de archivo y seguimiento',
+            C: 'Reforzar la atenci\u00f3n al detalle en el registro de datos y cruce documental'
+        },
+        interpretaciones: {
+            D: function(p) {
+                if (p >= 80) return 'Alta proactividad para resolver urgencias de compras. Capacidad para tomar decisiones r\u00e1pidas sobre proveedores alternativos y manejar m\u00faltiples requerimientos simult\u00e1neos.';
+                if (p >= 60) return 'Buena capacidad de ejecuci\u00f3n. Responde con agilidad a las solicitudes del \u00e1rea y maneja adecuadamente los tiempos de respuesta a proveedores.';
+                if (p >= 40) return 'Ejecuci\u00f3n moderada. Puede requerir instrucciones claras para priorizar tareas. Se beneficia de supervisi\u00f3n cercana en d\u00edas de alta demanda.';
+                return 'Perfil que prefiere seguir procedimientos establecidos. Puede requerir apoyo para manejar imprevistos o proveedores que no responden a tiempo.';
+            },
+            I: function(p) {
+                if (p >= 80) return 'Excelente para contacto telef\u00f3nico con proveedores y atenci\u00f3n a clientes internos. Capacidad para negociar plazos de entrega y mantener relaciones cordiales con la base de proveedores.';
+                if (p >= 60) return 'Buena comunicaci\u00f3n interpersonal. Se relaciona adecuadamente con proveedores y compa\u00f1eros de otras \u00e1reas. Adecuado para seguimiento telef\u00f3nico de \u00f3rdenes.';
+                if (p >= 40) return 'Comunicaci\u00f3n funcional. Puede preferir el correo electr\u00f3nico sobre la llamada telef\u00f3nica. Se recomienda apoyarlo en negociaciones con proveedores.';
+                return 'Perfil reservado. Prefiere tareas administrativas internas sobre el contacto directo con proveedores. Puede requerir apoyo en la gesti\u00f3n telef\u00f3nica del \u00e1rea.';
+            },
+            S: function(p) {
+                if (p >= 80) return 'Alta constancia y disciplina en tareas repetitivas. Ideal para archivo documental, seguimiento de \u00f3rdenes y actualizaci\u00f3n de bases de datos de proveedores. Muy confiable en procesos rutinarios.';
+                if (p >= 60) return 'Buen balance entre constancia y adaptabilidad. Comprometido con los procesos del \u00e1rea. Adecuado para mantener actualizados los registros de compras.';
+                if (p >= 40) return 'Constancia moderada. Puede mostrar impaciencia con tareas muy repetitivas de archivo. Requiere variedad en sus actividades para mantener la motivaci\u00f3n.';
+                return 'Prefiere variedad de tareas. Puede encontrar mon\u00f3tono el archivo documental continuo. Se adapta mejor a roles con diversidad de actividades durante el d\u00eda.';
+            },
+            C: function(p) {
+                if (p >= 80) return 'Excelente atenci\u00f3n al detalle en el cruce de facturas vs \u00f3rdenes de compra, verificaci\u00f3n de datos y control documental. Ideal para evitar errores en el cierre documental del \u00e1rea.';
+                if (p >= 60) return 'Buena precisi\u00f3n en el manejo de datos. Revisa adecuadamente la documentaci\u00f3n antes de enviar a contabilidad. Adecuado para mantener el orden en el archivo de compras.';
+                if (p >= 40) return 'Atenci\u00f3n a detalles funcional. Puede ocasionalmente pasar por alto discrepancias menores en facturas. Se beneficia de listas de verificaci\u00f3n.';
+                return 'Enfoque en visi\u00f3n general m\u00e1s que en detalles espec\u00edficos. Puede requerir supervisi\u00f3n en el cruce documental para evitar errores en facturaci\u00f3n.';
+            }
+        },
+        getRecomendaciones: function(analisis) {
+            var recs = [];
+            var p = analisis.percentiles || {};
+            var c = analisis.compatibilidad || {};
+            if (p.D < 55) recs.push('Fortalecer la proactividad en la resoluci\u00f3n de imprevistos con proveedores y manejo de urgencias de compras.');
+            if (p.I < 55) recs.push('Capacitaci\u00f3n en comunicaci\u00f3n telef\u00f3nica efectiva y t\u00e9cnicas b\u00e1sicas de negociaci\u00f3n con proveedores.');
+            if (p.S < 55) recs.push('Desarrollar disciplina en el seguimiento de \u00f3rdenes de compra y actualizaci\u00f3n peri\u00f3dica del archivo documental.');
+            if (p.C < 55) recs.push('Reforzar la atenci\u00f3n al detalle en el cruce de facturas, verificaci\u00f3n de datos y control documental.');
+            if ((c.manejoExcel || 0) < 65) recs.push('Formaci\u00f3n en Excel intermedio: tablas din\u00e1micas, filtros avanzados y funciones de b\u00fasqueda.');
+            if ((c.controlFacturacion || 0) < 65) recs.push('Entrenamiento en cruce documental: verificaci\u00f3n de facturas vs \u00f3rdenes de compra y remisiones.');
+            if ((c.organizacionDocumental || 0) < 65) recs.push('Capacitaci\u00f3n en gesti\u00f3n documental y t\u00e9cnicas de archivo f\u00edsico y digital.');
+            if (recs.length === 0) {
+                recs.push('Mantener las buenas pr\u00e1cticas identificadas en la evaluaci\u00f3n conductual.');
+                recs.push('Realizar seguimiento peri\u00f3dico del desempe\u00f1o en el cargo de Asistente de Compras.');
+                recs.push('Explorar oportunidades de crecimiento en el \u00e1rea de compras y cadena de abastecimiento.');
+            }
+            return recs.slice(0, 6);
+        },
+        recomendacionTexts: [
+            { min: 75, text: 'APTO para el cargo de Asistente de Compras. El perfil DISC muestra alta compatibilidad con los requisitos del puesto. Demuestra competencias para gesti\u00f3n documental, atenci\u00f3n a proveedores, seguimiento de \u00f3rdenes y control administrativo del \u00e1rea de compras.' },
+            { min: 55, text: 'APTO CON DESARROLLO. El perfil muestra compatibilidad media con el cargo. Se recomienda capacitaci\u00f3n en herramientas ofim\u00e1ticas y acompa\u00f1amiento en los primeros meses.' },
+            { min: 40, text: 'REQUIERE EVALUACI\u00d3N ADICIONAL. El perfil muestra algunas fortalezas pero brechas para el rol de asistencia en compras. Se recomienda entrevista por competencias.' },
+            { min: 0,  text: 'NO RECOMENDADO para el cargo de Asistente de Compras. El perfil DISC no muestra la compatibilidad necesaria para el manejo documental y administrativo del \u00e1rea.' }
+        ]
     }
 };
 
