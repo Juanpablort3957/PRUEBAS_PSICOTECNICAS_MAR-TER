@@ -6,6 +6,7 @@ var CARGO_CONFIG = {
         paginaTest: 'test.html',
         paginaResultados: 'resultados.html',
         paginaPanel: 'panel.html',
+        candidatoVeResultados: true,
         tecnicoSectionTitle: 'Resultados Evaluaci\u00f3n T\u00e9cnica SIG',
         reqLabels: [
             { key: 'conocimientoNormativo', label: 'Conocimiento Normativo SST' },
@@ -122,10 +123,11 @@ var CARGO_CONFIG = {
     mantenimiento: {
         nombre: 'Coordinador de Mantenimiento y Log\u00edstica',
         cargoFormal: 'Coordinador de Mantenimiento y Log\u00edstica',
-        paginaInicio: 'index_mantenimiento.html',
-        paginaTest: 'test_mantenimiento.html',
-        paginaResultados: 'resultados_mantenimiento.html',
-        paginaPanel: 'panel_mantenimiento.html',
+        paginaInicio: 'index.html',
+        paginaTest: 'test.html',
+        paginaResultados: 'resultados.html',
+        paginaPanel: 'panel.html',
+        candidatoVeResultados: true,
         tecnicoSectionTitle: 'Resultados Evaluaci\u00f3n T\u00e9cnica de Mantenimiento',
         reqLabels: [
             { key: 'liderazgoEquipos', label: 'Liderazgo de equipos' },
@@ -246,6 +248,7 @@ var CARGO_CONFIG = {
         paginaTest: 'test.html',
         paginaResultados: 'resultados.html',
         paginaPanel: 'panel.html',
+        candidatoVeResultados: false,
         tecnicoSectionTitle: 'Resultados Evaluaci\u00f3n T\u00e9cnica HSEQ',
         reqLabels: [
             { key: 'liderazgoHSEQ', label: 'Liderazgo en HSEQ' },

@@ -149,9 +149,7 @@ function seleccionarRespuesta(opcion) {
 }
 
 function seleccionarRespuestaTecnica(opcion) {
-    if (respuestasTecnicas.respuestas[indicePregunta] !== undefined && respuestasTecnicas.respuestas[indicePregunta] >= 0) return;
     respuestasTecnicas.respuestas[indicePregunta] = opcion;
-    clearInterval(timerInterval);
     mostrarPreguntaTecnica();
     document.getElementById('btn-siguiente').disabled = false;
 }
@@ -317,25 +315,31 @@ async function enviarResultadosPorEmail() {
         emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
         await emailjs.send(EMAILJS_CONFIG.SERVICE_ID, EMAILJS_CONFIG.TEMPLATE_ID, params);
 
-        try { await generarPDFCompleto(respuestasDISC, respuestasTecnicas); } catch (e) {}
-        document.body.innerHTML = buildSuccessHTML(true);
+        if (cfg.candidatoVeResultados) {
+            try { await generarPDFCompleto(respuestasDISC, respuestasTecnicas); } catch (e) {}
+        }
+        document.body.innerHTML = buildSuccessHTML(true, cfg.candidatoVeResultados);
     } catch (error) {
         console.error('Error enviando email:', error);
-        try { await generarPDFCompleto(respuestasDISC, respuestasTecnicas); } catch (e) {}
-        document.body.innerHTML = buildSuccessHTML(false);
+        if (cfg.candidatoVeResultados) {
+            try { await generarPDFCompleto(respuestasDISC, respuestasTecnicas); } catch (e) {}
+        }
+        document.body.innerHTML = buildSuccessHTML(false, cfg.candidatoVeResultados);
     }
 }
 
-function buildSuccessHTML(emailOK) {
+function buildSuccessHTML(emailOK, puedeVerResultados) {
     return '<div class="container" style="max-width:600px;margin:100px auto;text-align:center;padding:40px;background:#fff;border-radius:12px;box-shadow:0 2px 16px rgba(0,0,0,0.08);">'
-        + '<img src="Sin-titulo-1.png" alt="MARYTER" id="logo-image" style="max-width:150px;margin-bottom:20px;">'
+        + '<img src="../Sin-titulo-1.png" alt="MARYTER" id="logo-image" style="max-width:150px;margin-bottom:20px;">'
         + '<h2 style="color:#1a3a5c;">\u00a1Evaluaci\u00f3n Completa!</h2>'
         + '<p style="color:#555;font-size:1.1rem;margin:20px 0;">Gracias por tu participaci\u00f3n, <strong>' + nombreActual + '</strong>.</p>'
         + '<div style="background:' + (emailOK ? '#f0fdf4' : '#fff3cd') + ';border-radius:10px;padding:20px;margin:20px 0;">'
         + '<p style="color:' + (emailOK ? '#198754' : '#856404') + ';font-size:1rem;">\u2713 Tus respuestas han sido registradas exitosamente.</p>'
         + (emailOK ? '' : '<p style="color:#856404;font-size:0.9rem;">No se pudo enviar el email autom\u00e1tico, pero tus datos est\u00e1n seguros.</p>')
-        + '<p style="color:#555;font-size:0.9rem;">Se ha descargado autom\u00e1ticamente el informe PDF completo.</p>'
-        + '<button onclick="generarPDFCompleto(respuestasDISC, respuestasTecnicas)" class="btn btn-success mt-2" style="padding:10px 30px;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;">\ud83d\udcc4 Descargar PDF nuevamente</button></div>'
+        + (puedeVerResultados ? '<p style="color:#555;font-size:0.9rem;">Se ha descargado autom\u00e1ticamente el informe PDF completo.</p>'
+            + '<button onclick="generarPDFCompleto(respuestasDISC, respuestasTecnicas)" class="btn btn-success mt-2" style="padding:10px 30px;border:none;border-radius:8px;font-size:16px;font-weight:600;cursor:pointer;">\ud83d\udcc4 Descargar PDF nuevamente</button>'
+            : '<p style="color:#555;font-size:0.9rem;">El equipo evaluador revisar\u00e1 tu perfil y se pondr\u00e1 en contacto contigo.</p>')
+        + '</div>'
         + '<p style="color:#888;font-size:0.85rem;">MARYTER S.A.S - Dragados Mar y Ter</p></div>';
 }
 
