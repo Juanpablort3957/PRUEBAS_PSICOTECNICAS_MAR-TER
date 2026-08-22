@@ -51,22 +51,22 @@
         document.addEventListener('DOMContentLoaded', async function() { await initDB(); });
         async function verificarCandidato() {
             var cfg = getCargoConfig(), cedula = document.getElementById('cedula').value.trim();
-            if (!cedula) { mostrarMensaje('Por favor ingrese su n&uacute;mero de c&eacute;dula', 'warning'); return; }
+            if (!cedula) { mostrarMensaje('Por favor ingrese su n&uacute;mero de c&eacute;dula para continuar.', 'warning'); return; }
             var candidato = await obtenerCandidato(cedula), resultados = await obtenerResultados(cedula);
             if (candidato && resultados && resultados.completada) {
-                document.getElementById('login-form').innerHTML = '<div class="alert alert-success text-center" style="font-size:1.1rem;"><strong>&iexcl;Gracias por tu participaci&oacute;n!</strong><br>Tus respuestas ya fueron registradas. Pronto nos pondremos en contacto contigo.</div>';
+                document.getElementById('login-form').innerHTML = '<div class="alert alert-success text-center" style="font-size:1.1rem;"><strong>&iexcl;Gracias por tu participaci&oacute;n!</strong><br>Tus respuestas fueron registradas exitosamente. Nos pondremos en contacto contigo.</div>';
             } else if (candidato) {
                 window.location.href = cfg.paginaTest + '?cedula=' + cedula;
             } else {
                 document.getElementById('datos-candidato').style.display = 'block';
                 document.getElementById('btn-ingresar').textContent = 'Registrarse e Iniciar Prueba';
                 document.getElementById('btn-ingresar').onclick = registrarCandidato;
-                mostrarMensaje('C&eacute;dula no registrada. Complete sus datos para continuar.', 'info');
+                mostrarMensaje('&iexcl;Bienvenido! Para iniciar la prueba, complete sus datos personales.', 'info');
             }
         }
         async function registrarCandidato() {
             var cfg = getCargoConfig(), cedula = document.getElementById('cedula').value.trim(), nombre = document.getElementById('nombre').value.trim(), email = document.getElementById('email').value.trim();
-            if (!cedula || !nombre) { mostrarMensaje('Complete todos los campos obligatorios', 'warning'); return; }
+            if (!cedula || !nombre) { mostrarMensaje('Por favor complete al menos su nombre completo para continuar.', 'warning'); return; }
             await guardarCandidato({ cedula: cedula, nombre: nombre, email: email, fecha: new Date().toISOString(), completado: false });
             window.location.href = cfg.paginaTest + '?cedula=' + cedula;
         }
