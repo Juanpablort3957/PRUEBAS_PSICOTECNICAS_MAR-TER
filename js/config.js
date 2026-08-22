@@ -481,6 +481,127 @@ var CARGO_CONFIG = {
             { min: 40, text: 'REQUIERE EVALUACI\u00d3N ADICIONAL. El perfil muestra algunas fortalezas pero brechas para el rol de asistencia en compras. Se recomienda entrevista por competencias.' },
             { min: 0,  text: 'NO RECOMENDADO para el cargo de Asistente de Compras. El perfil DISC no muestra la compatibilidad necesaria para el manejo documental y administrativo del \u00e1rea.' }
         ]
+    },
+
+    jefeadmin: {
+        nombre: 'Jefe Administrativo',
+        cargoFormal: 'Jefe Administrativo',
+        paginaInicio: 'index.html',
+        paginaTest: 'test.html',
+        paginaResultados: 'resultados.html',
+        paginaPanel: 'panel.html',
+        candidatoVeResultados: false,
+        tecnicoSectionTitle: 'Resultados Evaluaci\u00f3n T\u00e9cnica - Jefe Administrativo',
+        reqLabels: [
+            { key: 'liderazgoEquipos', label: 'Liderazgo de Equipos' },
+            { key: 'orientacionResultados', label: 'Orientaci\u00f3n a Resultados' },
+            { key: 'pensamientoAnalitico', label: 'Pensamiento Anal\u00edtico y Estrat\u00e9gico' },
+            { key: 'gestionTalentoHumano', label: 'Gesti\u00f3n de Talento Humano' },
+            { key: 'comunicacionNegociacion', label: 'Comunicaci\u00f3n y Negociaci\u00f3n' },
+            { key: 'gestionIndicadores', label: 'Gesti\u00f3n de Indicadores (KPIs)' },
+            { key: 'trabajoBajoPresion', label: 'Trabajo Bajo Presi\u00f3n y Priorizaci\u00f3n' },
+            { key: 'eticaConfidencialidad', label: '\u00c9tica y Confidencialidad' },
+            { key: 'gestionProyectos', label: 'Gesti\u00f3n de Proyectos y Mejora' },
+            { key: 'cumplimientoNormativo', label: 'Cumplimiento Normativo y Legal' }
+        ],
+        requisitos: {
+            liderazgoEquipos: { dims: ['D', 'I'], peso: 1.0 },
+            orientacionResultados: { dims: ['D', 'C'], peso: 1.0 },
+            pensamientoAnalitico: { dims: ['C', 'D'], peso: 1.0 },
+            gestionTalentoHumano: { dims: ['I', 'S'], peso: 0.9 },
+            comunicacionNegociacion: { dims: ['I', 'D'], peso: 0.9 },
+            gestionIndicadores: { dims: ['C', 'S'], peso: 0.9 },
+            trabajoBajoPresion: { dims: ['D', 'S'], peso: 0.8 },
+            eticaConfidencialidad: { dims: ['C', 'S'], peso: 1.0 },
+            gestionProyectos: { dims: ['D', 'C'], peso: 0.9 },
+            cumplimientoNormativo: { dims: ['C', 'S'], peso: 0.9 }
+        },
+        perfilesDISC: [
+            { cond: function(d,i,s,c){ return d>=4 && c>=4 && i>=3; },
+              perfil: 'L\u00edder Estrat\u00e9gico Directivo',
+              estilo: 'Combina autoridad para dirigir equipos con rigor anal\u00edtico. Ideal para planear, dirigir y controlar \u00e1reas administrativas y tomar decisiones de alto impacto.' },
+            { cond: function(d,i,s,c){ return c>=4 && s>=4 && d>=3; },
+              perfil: 'Gestor Anal\u00edtico',
+              estilo: 'Excelente para construcci\u00f3n de indicadores, control presupuestal y cumplimiento normativo. Prioriza la precisi\u00f3n, los datos y la mejora continua de procesos.' },
+            { cond: function(d,i,s,c){ return i>=4 && s>=4; },
+              perfil: 'Facilitador de Equipos',
+              estilo: 'Gran habilidad para gestionar talento humano, clima laboral y comunicaci\u00f3n interna. Ideal para liderar procesos de selecci\u00f3n, inducci\u00f3n y bienestar.' },
+            { cond: function(d,i,s,c){ return d>=4 && i>=4 && c>=3; },
+              perfil: 'Transformador Organizacional',
+              estilo: 'Lidera cambios organizacionales con determinaci\u00f3n y persuasi\u00f3n. Ideal para optimizar flujos de trabajo e implementar nuevas estrategias.' },
+            { cond: function(d,i,s,c){ return d>=3 && i>=3 && s>=3 && c>=3; },
+              perfil: 'Directivo Integral',
+              estilo: 'Perfil equilibrado que combina liderazgo, an\u00e1lisis, comunicaci\u00f3n y ejecuci\u00f3n. Puede desempe\u00f1arse en m\u00faltiples frentes de la gesti\u00f3n administrativa.' },
+            { cond: function(d,i,s,c){ return c>=4 && d>=3; },
+              perfil: 'Controlador Normativo',
+              estilo: 'S\u00f3lido en cumplimiento legal, indicadores y control de procesos. Enfoque en legislaci\u00f3n laboral, SIG y gesti\u00f3n documental rigurosa.' },
+            { cond: function(d,i,s,c){ return d>=4 && s>=3; },
+              perfil: 'Ejecutor de Resultados',
+              estilo: 'Orientado a resultados y a la acci\u00f3n. Toma decisiones r\u00e1pidas y mantiene constancia en el cumplimiento de planes de acci\u00f3n y proyectos.' }
+        ],
+        perfilDefault: { perfil: 'Perfil en Desarrollo Directivo', estilo: 'No encaja en perfiles t\u00edpicos de jefatura administrativa. Se requiere evaluaci\u00f3n adicional.' },
+        fortalezaDescs: {
+            D: 'Liderazgo de equipos y capacidad para tomar decisiones estrat\u00e9gicas bajo presi\u00f3n',
+            I: 'Comunicaci\u00f3n asertiva, negociaci\u00f3n y gesti\u00f3n del clima organizacional',
+            S: 'Constancia en el seguimiento de planes de acci\u00f3n, presupuesto e indicadores',
+            C: 'Pensamiento anal\u00edtico, rigor en datos y cumplimiento normativo y legal'
+        },
+        areaDescs: {
+            D: 'Fortalecer el liderazgo directivo y la toma de decisiones en situaciones cr\u00edticas',
+            I: 'Desarrollar habilidades de negociaci\u00f3n y gesti\u00f3n de relaciones laborales',
+            S: 'Mejorar la constancia en el monitoreo de indicadores y procesos administrativos',
+            C: 'Profundizar el an\u00e1lisis de datos, control presupuestal y cumplimiento legal'
+        },
+        interpretaciones: {
+            D: function(p) {
+                if (p >= 80) return 'Alto liderazgo directivo. Capacidad para dirigir equipos, tomar decisiones estrat\u00e9gicas r\u00e1pidas y gestionar m\u00faltiples frentes administrativos con autoridad y firmeza.';
+                if (p >= 60) return 'Buen liderazgo. Equilibrio entre direcci\u00f3n de equipos y delegaci\u00f3n de responsabilidades. Adecuado para liderar reuniones de seguimiento y coordinar \u00e1reas administrativas.';
+                if (p >= 40) return 'Liderazgo moderado. Puede requerir apoyo para imponer decisiones dif\u00edciles. Se beneficia de un marco claro de autoridad delegada desde gerencia.';
+                return 'Perfil que prefiere consenso sobre autoridad directa. Puede mostrar indecisi\u00f3n al gestionar conflictos laborales o decisiones de alto impacto.';
+            },
+            I: function(p) {
+                if (p >= 80) return 'Excelente comunicador y negociador. Capacidad para gestionar relaciones laborales, liderar procesos de talento humano y presentar informes ejecutivos a gerencia con persuasi\u00f3n.';
+                if (p >= 60) return 'Buena comunicaci\u00f3n asertiva. Se relaciona adecuadamente con el equipo, proveedores y directivos. Adecuado para manejo de clima laboral y negociaci\u00f3n con proveedores.';
+                if (p >= 40) return 'Comunicaci\u00f3n funcional. Puede preferir el trabajo anal\u00edtico sobre la interacci\u00f3n social. Se recomienda apoyarlo en presentaciones y negociaciones de alto nivel.';
+                return 'Perfil reservado. Prefiere trabajo t\u00e9cnico y anal\u00edtico. Puede requerir apoyo en gesti\u00f3n de talento humano y comunicaci\u00f3n organizacional.';
+            },
+            S: function(p) {
+                if (p >= 80) return 'Alta constancia y disciplina en la ejecuci\u00f3n de procesos administrativos. Ideal para monitoreo de indicadores, control presupuestal y seguimiento de planes de acci\u00f3n a largo plazo.';
+                if (p >= 60) return 'Buen balance entre constancia y adaptabilidad. Comprometido con los procesos del \u00e1rea. Adecuado para mantener estabilidad en la gesti\u00f3n administrativa.';
+                if (p >= 40) return 'Estabilidad moderada. Puede mostrar impaciencia con procesos muy repetitivos. Requiere variedad de retos para mantener alto desempe\u00f1o directivo.';
+                return 'Alta adaptabilidad al cambio. Responde bien a entornos din\u00e1micos. Puede encontrar mon\u00f3tono el seguimiento rutinario de indicadores.';
+            },
+            C: function(p) {
+                if (p >= 80) return 'Enfoque excepcional en an\u00e1lisis de datos, control presupuestal y cumplimiento legal. Rigor en construcci\u00f3n de indicadores, informes ejecutivos y adherencia a normas del SIG.';
+                if (p >= 60) return 'Buen equilibrio entre rigor anal\u00edtico y pragmatismo. Sigue procedimientos correctamente mientras busca eficiencia. Adecuado para toma de decisiones basada en datos.';
+                if (p >= 40) return 'Atenci\u00f3n a detalles funcional. Puede pasar por alto requisitos legales menores. Se beneficia de sistemas de control y listas de verificaci\u00f3n.';
+                return 'Enfoque en visi\u00f3n general m\u00e1s que en detalles normativos. Puede requerir supervisi\u00f3n en cumplimiento legal y gesti\u00f3n documental.';
+            }
+        },
+        getRecomendaciones: function(analisis) {
+            var recs = [];
+            var p = analisis.percentiles || {};
+            var c = analisis.compatibilidad || {};
+            if (p.D < 55) recs.push('Fortalecer el liderazgo directivo y la toma de decisiones estrat\u00e9gicas bajo presi\u00f3n.');
+            if (p.I < 55) recs.push('Desarrollar habilidades de comunicaci\u00f3n asertiva, negociaci\u00f3n y gesti\u00f3n de relaciones laborales.');
+            if (p.S < 55) recs.push('Mejorar la constancia en el monitoreo de indicadores y seguimiento de planes de acci\u00f3n.');
+            if (p.C < 55) recs.push('Profundizar en an\u00e1lisis de datos, control presupuestal y cumplimiento normativo.');
+            if ((c.gestionIndicadores || 0) < 65) recs.push('Formaci\u00f3n en construcci\u00f3n e interpretaci\u00f3n de indicadores de gesti\u00f3n (KPIs) y tableros de control.');
+            if ((c.gestionTalentoHumano || 0) < 65) recs.push('Entrenamiento en gesti\u00f3n de talento humano, selecci\u00f3n y manejo de relaciones laborales.');
+            if ((c.cumplimientoNormativo || 0) < 65) recs.push('Capacitaci\u00f3n en legislaci\u00f3n laboral colombiana y sistemas de gesti\u00f3n de calidad (SIG).');
+            if (recs.length === 0) {
+                recs.push('Mantener las buenas pr\u00e1cticas identificadas en la evaluaci\u00f3n conductual.');
+                recs.push('Realizar seguimiento peri\u00f3dico del desempe\u00f1o en el cargo de Jefe Administrativo.');
+                recs.push('Explorar roles de mayor responsabilidad en direcci\u00f3n administrativa y financiera.');
+            }
+            return recs.slice(0, 6);
+        },
+        recomendacionTexts: [
+            { min: 75, text: 'APTO para el cargo de Jefe Administrativo. El perfil DISC muestra alta compatibilidad con los requisitos del puesto. Demuestra competencias para liderar equipos, gestionar talento humano, controlar presupuesto e indicadores, y garantizar cumplimiento normativo en la gesti\u00f3n administrativa.' },
+            { min: 55, text: 'APTO CON DESARROLLO. El perfil muestra compatibilidad media con el cargo de jefatura administrativa. Se recomienda plan de desarrollo enfocado en liderazgo estrat\u00e9gico y gesti\u00f3n de equipos.' },
+            { min: 40, text: 'REQUIERE EVALUACI\u00d3N ADICIONAL. El perfil muestra algunas fortalezas pero brechas para el rol directivo. Se recomienda entrevista por competencias y verificaci\u00f3n de experiencia en jefatura.' },
+            { min: 0,  text: 'NO RECOMENDADO para el cargo de Jefe Administrativo. El perfil DISC no muestra la compatibilidad necesaria para liderar la gesti\u00f3n administrativa y financiera.' }
+        ]
     }
 };
 
