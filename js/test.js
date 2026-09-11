@@ -263,8 +263,10 @@ async function enviarResultadosPorEmail() {
     var cfg = getCargoConfig();
     var analisis = respuestasDISC.analisis;
     var compat = analisis.compatibilidad || {};
-    var promedioGeneral = Object.keys(compat).length > 0
-        ? Math.round(Object.values(compat).reduce(function(a, b) { return a + b; }, 0) / Object.keys(compat).length) : 0;
+    var promedioGeneral = getPromedioCombinado({
+        analisis: respuestasDISC.analisis,
+        tecnico: respuestasTecnicas.analysis ? { analisis: respuestasTecnicas.analysis } : null
+    });
 
     var veredicto = 'EN PROCESO';
     if (promedioGeneral >= 75) veredicto = 'APTO';

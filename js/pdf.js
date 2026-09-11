@@ -58,14 +58,32 @@ async function _logoData() {
     } catch (e) { return ''; }
 }
 
+function getPromedioDisc(resultado) {
+    var comp = (resultado && resultado.analisis && resultado.analisis.compatibilidad) || {};
+    var vals = Object.values(comp);
+    return vals.length > 0 ? vals.reduce(function(a, b) { return a + b; }, 0) / vals.length : 0;
+}
+
+function getPromedioTecnico(resultado) {
+    var ta = (resultado && resultado.tecnico) || {};
+    var anal = ta.analisis || ta.analysis || null;
+    return anal && typeof anal.porcentaje === 'number' ? anal.porcentaje : null;
+}
+
+function getPromedioCombinado(resultado) {
+    var disc = getPromedioDisc(resultado);
+    var tec = getPromedioTecnico(resultado);
+    if (tec === null) return Math.round(disc);
+    return Math.round((disc + tec) / 2);
+}
+
 async function _buildDISC(resultado) {
     var cfg = getCargoConfig();
     var CARGO = cfg.cargoFormal;
     var analisis = resultado.analisis || {};
     var percentiles = analisis.percentiles || { D:0, I:0, S:0, C:0 };
     var compatibilidad = analisis.compatibilidad || {};
-    var prom = Object.keys(compatibilidad).length > 0
-        ? Math.round(Object.values(compatibilidad).reduce(function(a,b) { return a+b; }, 0) / Object.keys(compatibilidad).length) : 0;
+    var prom = getPromedioCombinado(resultado);
     var vBg = '#6c757d', vText = 'En Proceso';
     if (prom >= 75) { vBg = '#198754'; vText = 'APTO'; }
     else if (prom >= 55) { vBg = '#0d6efd'; vText = 'APTO CON DESARROLLO'; }
@@ -225,8 +243,11 @@ async function generarPDF(resultado) {
 
 async function generarPDFCompleto(discResult, tecResult) {
     try {
-        var html = await _buildDISC(discResult);
-        if (tecResult && tecResult.analysis) { html += _buildTecnico(tecResult.analysis); }
+        var ta = tecResult ? (tecResult.analysis || tecResult.analisis) : null;
+        var discData = discResult;
+        if (ta) { discData = Object.assign({}, discResult, { tecnico: { analisis: ta } }); }
+        var html = await _buildDISC(discData);
+        if (ta) { html += _buildTecnico(ta); }
         var canvas = await _capturarHTML(html, 800);
         var { jsPDF } = window.jspdf;
         var doc = new jsPDF();
@@ -241,8 +262,7 @@ function mostrarResultado(resultado) {
     var analisis = resultado.analisis || {};
     var percentiles = analisis.percentiles || { D:0, I:0, S:0, C:0 };
     var compatibilidad = analisis.compatibilidad || {};
-    var promedioGeneral = Object.keys(compatibilidad).length > 0
-        ? Object.values(compatibilidad).reduce(function(a,b) { return a+b; }, 0) / Object.keys(compatibilidad).length : 0;
+    var promedioGeneral = getPromedioCombinado(resultado);
 
     var vClass = 'bg-secondary', vText = 'En Proceso';
     if (promedioGeneral >= 75) { vClass = 'bg-success'; vText = 'APTO'; }

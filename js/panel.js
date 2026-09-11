@@ -9,9 +9,8 @@ async function cargarDatos() {
 }
 
 function getPromedio(resultado) {
-    if (!resultado.analisis || !resultado.analisis.compatibilidad) return 0;
-    var vals = Object.values(resultado.analisis.compatibilidad);
-    return vals.length > 0 ? vals.reduce(function(a, b) { return a + b; }, 0) / vals.length : 0;
+    if (!resultado || !resultado.analisis) return 0;
+    return getPromedioCombinado(resultado);
 }
 
 function renderizarLista() {
@@ -82,6 +81,24 @@ async function verDetalle(cedula) {
         }).join('')
         : '<tr><td colspan="3">Sin datos</td></tr>';
 
+    var ta = (resultado.tecnico && (resultado.tecnico.analisis || resultado.tecnico.analysis)) || null;
+    var tecHTML = '';
+    if (ta) {
+        var tBadge = ta.porcentaje >= 70 ? 'bg-success' : ta.porcentaje >= 50 ? 'bg-warning' : 'bg-danger';
+        var tVerd = ta.veredicto || '';
+        var tPunt = (typeof ta.puntaje === 'number' ? ta.puntaje : 0) + '/' + (typeof ta.total === 'number' ? ta.total : 0);
+        var tPorc = typeof ta.porcentaje === 'number' ? ta.porcentaje : 0;
+        var tCat = Object.values(ta.categorias || {}).map(function(cat) {
+            var cp = typeof cat.porcentaje === 'number' ? cat.porcentaje : 0;
+            return '<tr><td>' + (cat.label || '') + '</td><td class="text-center">' + (cat.aciertos || 0) + '/' + (cat.total || 0) + '</td><td class="text-center">' + cp + '%</td></tr>';
+        }).join('');
+        tecHTML = '<div class="card mb-3"><div class="card-body"><h6>Resultados Evaluaci\u00f3n T\u00e9cnica</h6>'
+            + '<span class="badge ' + tBadge + '">' + tVerd + '</span> '
+            + '<strong>' + tPunt + '</strong> (' + tPorc + '%)'
+            + '<table class="table table-sm mt-2 mb-2"><thead><tr><th>Categor\u00eda</th><th class="text-center">Aciertos</th><th class="text-center">%</th></tr></thead><tbody>' + tCat + '</tbody></table>'
+            + '<p style="font-size:0.85rem;color:#555;margin:0;">' + (ta.recomendacion || '') + '</p></div></div>';
+    }
+
     var html = '<div class="modal fade" id="modalDetalle" tabindex="-1">'
         + '<div class="modal-dialog modal-lg"><div class="modal-content">'
         + '<div class="modal-header"><h5 class="modal-title">Detalle del Candidato - ' + cfg.nombre + '</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>'
@@ -94,6 +111,7 @@ async function verDetalle(cedula) {
         + '<div class="card mb-3"><div class="card-body"><h6>Gr\u00e1fico DISC</h6>' + discBars + '</div></div>'
         + '<div class="card mb-3"><div class="card-body"><h6>Compatibilidad con el Cargo: ' + cfg.nombre + '</h6>'
         + '<table class="table table-sm"><thead><tr><th>Requisito</th><th>Percentil</th><th>Evaluaci\u00f3n</th></tr></thead><tbody>' + compatRows + '</tbody></table></div></div>'
+        + tecHTML
         + '<div class="row"><div class="col-md-6"><div class="analisis-card fortalezas"><h6>Fortalezas</h6><ul>'
         + ((resultado.analisis?.fortalezas || []).length > 0 ? resultado.analisis.fortalezas.map(function(f) { return '<li>' + f + '</li>'; }).join('') : '<li>No identificadas</li>') + '</ul></div></div>'
         + '<div class="col-md-6"><div class="analisis-card debilidades"><h6>\u00c1reas de Desarrollo</h6><ul>'
