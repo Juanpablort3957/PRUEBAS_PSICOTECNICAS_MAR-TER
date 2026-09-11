@@ -624,7 +624,7 @@ var CARGO_CONFIG = {
             { key: 'eticaControlInterno', label: '\u00c9tica / Control Interno / Conservaci\u00f3n Documental' },
             { key: 'niifPymeAvanzado', label: 'NIIF PYMES / Instrumentos Financieros' },
             { key: 'normatividadTributaria', label: 'Normatividad Tributaria (Retenciones, ICA, IVA)' }
-        },
+        ],
         requisitos: {
             legislacionTributaria: { dims: ['C', 'S'], peso: 1.0 },
             facturacionElectronica: { dims: ['C', 'D'], peso: 1.0 },
