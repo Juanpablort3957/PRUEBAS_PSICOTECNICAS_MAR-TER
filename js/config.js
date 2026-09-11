@@ -602,6 +602,127 @@ var CARGO_CONFIG = {
             { min: 40, text: 'REQUIERE EVALUACI\u00d3N ADICIONAL. El perfil muestra algunas fortalezas pero brechas para el rol directivo. Se recomienda entrevista por competencias y verificaci\u00f3n de experiencia en jefatura.' },
             { min: 0,  text: 'NO RECOMENDADO para el cargo de Jefe Administrativo. El perfil DISC no muestra la compatibilidad necesaria para liderar la gesti\u00f3n administrativa y financiera.' }
         ]
+    },
+
+    asistente_contable: {
+        nombre: 'Asistente Contable',
+        cargoFormal: 'Asistente Contable',
+        paginaInicio: 'index.html',
+        paginaTest: 'test.html',
+        paginaResultados: 'resultados.html',
+        paginaPanel: 'panel.html',
+        candidatoVeResultados: false,
+        tecnicoSectionTitle: 'Resultados Evaluaci\u00f3n T\u00e9cnica - Asistente Contable',
+        reqLabels: [
+            { key: 'legislacionTributaria', label: 'Legislaci\u00f3n Tributaria (IVA, ReteFuente, ICA, GMF)' },
+            { key: 'facturacionElectronica', label: 'Facturaci\u00f3n Electr\u00f3nica / RADIAN' },
+            { key: 'niifPyme', label: 'NIIF para PYMES (Deterioro, Anticipos, Activos)' },
+            { key: 'normatividadLaboral', label: 'Normatividad Laboral / N\u00f3mina / Seguridad Social (PILA)' },
+            { key: 'conciliacionCambio', label: 'Conciliaci\u00f3n / Diferencia en Cambio / GMF' },
+            { key: 'excelContabilidad', label: 'Excel Aplicado a Contabilidad' },
+            { key: 'conciliacionCartera', label: 'Conciliaci\u00f3n / Cartera / Cuentas por Pagar' },
+            { key: 'eticaControlInterno', label: '\u00c9tica / Control Interno / Conservaci\u00f3n Documental' },
+            { key: 'niifPymeAvanzado', label: 'NIIF PYMES / Instrumentos Financieros' },
+            { key: 'normatividadTributaria', label: 'Normatividad Tributaria (Retenciones, ICA, IVA)' }
+        },
+        requisitos: {
+            legislacionTributaria: { dims: ['C', 'S'], peso: 1.0 },
+            facturacionElectronica: { dims: ['C', 'D'], peso: 1.0 },
+            niifPyme: { dims: ['C', 'S'], peso: 0.9 },
+            normatividadLaboral: { dims: ['C', 'S'], peso: 1.0 },
+            conciliacionCambio: { dims: ['C', 'S'], peso: 0.9 },
+            excelContabilidad: { dims: ['C', 'S'], peso: 0.9 },
+            conciliacionCartera: { dims: ['C', 'S'], peso: 0.9 },
+            eticaControlInterno: { dims: ['C', 'S'], peso: 1.0 },
+            niifPymeAvanzado: { dims: ['C', 'S'], peso: 0.8 },
+            normatividadTributaria: { dims: ['C', 'S'], peso: 1.0 }
+        },
+        perfilesDISC: [
+            { cond: function(d,i,s,c){ return c>=4 && s>=4 && d>=3; },
+              perfil: 'Analista Riguroso',
+              estilo: 'Excelente para control riguroso de cumplimiento normativo, conciliaciones precisas y cumplimiento estricto de plazos DIAN. Prioriza la exactitud y el cumplimiento normativo.' },
+            { cond: function(d,i,s,c){ return c>=4 && d>=3 && i>=2; },
+              perfil: 'Controlador de Cumplimiento',
+              estilo: 'Enfoque en control riguroso de obligaciones tributarias, laborales y contables. Ideal para supervisar cierres mensuales y auditor\u00edas internas.' },
+            { cond: function(d,i,s,c){ return i>=4 && s>=3 && c>=3; },
+              perfil: 'Facilitador Financiero',
+              estilo: 'Gran habilidad para comunicar informaci\u00f3n financiera a gerencia, coordinar con auditores externos y facilitar la comunicaci\u00f3n entre \u00e1reas contables y operativas.' },
+            { cond: function(d,i,s,c){ return d>=4 && s>=3 && c>=3; },
+              perfil: 'Ejecutor Operativo',
+              estilo: 'Enfoque en ejecuci\u00f3n eficiente de procesos contables repetitivos: causaci\u00f3n, conciliaci\u00f3n, liquidaci\u00f3n de n\u00f3mina y env\u00edo de PILA.' },
+            { cond: function(d,i,s,c){ return d>=3 && i>=3 && s>=3 && c>=3; },
+              perfil: 'Integrado Contable',
+              estilo: 'Perfil vers\u00e1til y equilibrado. Puede desempe\u00f1arse en m\u00faltiples frentes del \u00e1rea contable: causaci\u00f3n, conciliaci\u00f3n, n\u00f3mina y reportes.' },
+            { cond: function(d,i,s,c){ return c>=4 && d>=3 && i>=2; },
+              perfil: 'Asesor Tributario',
+              estilo: 'S\u00f3lido en normatividad tributaria y capacidad para asesorar en retenciones, IVA, ReteICA y planeaci\u00f3n fiscal b\u00e1sica.' },
+            { cond: function(d,i,s,c){ return d>=3 && c>=4 && i>=2; },
+              perfil: 'Operador de Cierre',
+              estilo: 'Enfoque en cierre contable mensual: conciliaciones, ajustes, depreciaciones, provisiones y emisi\u00f3n de estados financieros preliminares.' }
+        ],
+        perfilDefault: { perfil: 'Perfil en Desarrollo Contable', estilo: 'No encaja en perfiles t\u00edpicos de asistencia contable. Se requiere evaluaci\u00f3n adicional.' },
+        fortalezaDescs: {
+            D: 'Capacidad de ejecuci\u00f3n y cumplimiento de plazos cr\u00edticos en cierres contables',
+            I: 'Comunicaci\u00f3n asertiva con auditores, proveedores, clientes internos y entidades de control',
+            S: 'Constancia y disciplina en procesos repetitivos de causaci\u00f3n, conciliaci\u00f3n y liquidaci\u00f3n de n\u00f3mina',
+            C: 'Rigor t\u00e9cnico en cumplimiento normativo, exactitud en registros contables y an\u00e1lisis de datos'
+        },
+        areaDescs: {
+            D: 'Desarrollar mayor proactividad en la resoluci\u00f3n de contingencias contables urgentes',
+            I: 'Fortalecer habilidades de comunicaci\u00f3n con auditores externos y clientes internos',
+            S: 'Mejorar la disciplina en el seguimiento de indicadores y procesos de cierre mensual',
+            C: 'Profundizar en actualizaciones normativas tributarias, laborales y NIIF'
+        },
+        interpretaciones: {
+            D: function(p) {
+                if (p >= 80) return 'Alta capacidad de ejecuci\u00f3n y decisi\u00f3n en situaciones de presi\u00f3n contable (cierres, vencimientos DIAN, contingencias). Capacidad para imponer criterios t\u00e9cnicos y liderar cierres mensuales.';
+                if (p >= 60) return 'Buena capacidad de ejecuci\u00f3n en procesos contables. Equilibrio entre seguimiento de procedimientos y toma de decisiones operativas. Adecuado para liderar tareas de causaci\u00f3n y liquidaci\u00f3n.';
+                if (p >= 40) return 'Ejecuci\u00f3n moderada. Puede requerir apoyo para imponer decisiones dif\u00edciles. Se beneficia de un marco claro de autoridad delegada desde gerencia.';
+                return 'Perfil que prefiere consenso sobre autoridad directa. Puede mostrar indecisi\u00f3n al gestionar conflictos laborales o decisiones de alto impacto.';
+            },
+            I: function(p) {
+                if (p >= 80) return 'Excelente comunicador y negociador. Capacidad para gestionar relaciones laborales, liderar procesos de talento humano y presentar informes ejecutivos a gerencia con persuas\u00f3n.';
+                if (p >= 60) return 'Buena comunicaci\u00f3n asertiva. Se relaciona adecuadamente con el equipo, proveedores y directivos. Adecuado para realizar inducciones y charlas de seguridad.';
+                if (p >= 40) return 'Enfoque moderado en comunicaci\u00f3n. Puede preferir la documentaci\u00f3n t\u00e9cnica sobre la interacci\u00f3n directa con equipos. Se recomienda apoyarlo en actividades de capacitaci\u00f3n masiva.';
+                return 'Perfil reservado en comunicaci\u00f3n. Prefiere trabajar con normativas, informes y an\u00e1lisis. Puede requerir apoyo en actividades que exijan liderazgo de grupos y sensibilizaci\u00f3n en seguridad.';
+            },
+            S: function(p) {
+                if (p >= 80) return 'Alta constancia y compromiso sostenido con los procesos contables. Ideal para seguimiento de planes de acci\u00f3n, inspecciones recurrentes y trabajo de campo prolongado. Muy confiable en el cumplimiento de rutinas.';
+                if (p >= 60) return 'Buen balance entre estabilidad y adaptabilidad. Comprometido con las tareas asignadas. Adecuado para trabajos que requieren tanto constancia como capacidad de ajuste a condiciones cambiantes.';
+                if (p >= 40) return 'Estabilidad moderada. Puede mostrar impaciencia con seguimientos muy repetitivos. Requiere variedad de tareas para mantener su motivaci\u00f3n en el rol contable.';
+                return 'Alta adaptabilidad al cambio. Prefiere diversidad de frentes de trabajo. Puede aburrirse con inspecciones rutinarias. Se adapta mejor a entornos din\u00e1micos y roles de respuesta a emergencias.';
+            },
+            C: function(p) {
+                if (p >= 80) return 'Enfoque excepcional en cumplimiento normativo y calidad. Seguimiento riguroso de est\u00e1ndares ISO, legislaci\u00f3n SST y gesti\u00f3n documental. Ideal para auditor\u00edas, control de registros y verificaci\u00f3n de requisitos legales.';
+                if (p >= 60) return 'Buen equilibrio entre rigor normativo y eficiencia operativa. Sigue procedimientos correctamente. Adecuado para identificaci\u00f3n de peligros, valoraci\u00f3n de riesgos y control documental.';
+                if (p >= 40) return 'Atenci\u00f3n a detalles normativos funcional. Puede pasar por alto requisitos legales menores. Se beneficia de listas de verificaci\u00f3n y formatos estandarizados para asegurar cumplimiento.';
+                return 'Enfoque en visi\u00f3n general m\u00e1s que en detalles normativos. Puede requerir supervisi\u00f3n en gesti\u00f3n documental y verificaci\u00f3n de cumplimiento legal. Se recomienda apoyo administrativo para registros HSEQ.';
+            }
+        },
+        getRecomendaciones: function(analisis) {
+            var recs = [];
+            var p = analisis.percentiles || {};
+            var c = analisis.compatibilidad || {};
+            if (p.D < 55) recs.push('Fortalecer la proactividad en la resoluci\u00f3n de contingencias contables urgentes y cumplimiento de plazos DIAN.');
+            if (p.I < 55) recs.push('Desarrollar habilidades de comunicaci\u00f3n asertiva con auditores externos, proveedores y clientes internos.');
+            if (p.S < 55) recs.push('Mejorar la disciplina en el seguimiento de indicadores y seguimiento de planes de acci\u00f3n contables.');
+            if (p.C < 55) recs.push('Profundizar en actualizaciones normativas tributarias, laborales y NIIF.');
+            if ((c.legislacionTributaria || 0) < 65) recs.push('Actualizaci\u00f3n en legislaci\u00f3n tributaria: IVA, ReteFuente, ReteICA, GMF y normativa DIAN vigente.');
+            if ((c.normatividadLaboral || 0) < 65) recs.push('Capacitaci\u00f3n en legislaci\u00f3n laboral, n\u00f3mina, PILA y seguridad social actualizada.');
+            if ((c.facturacionElectronica || 0) < 65) recs.push('Capacitaci\u00f3n en facturaci\u00f3n electr\u00f3nica, eventos RADIAN, Documento Soporte y resoluci\u00f3n 000085 DIAN.');
+            if (recs.length === 0) {
+                recs.push('Mantener las buenas pr\u00e1cticas identificadas en la evaluaci\u00f3n conductual contable.');
+                recs.push('Realizar seguimiento peri\u00f3dico del desempe\u00f1o en el cargo de Asistente Contable.');
+                recs.push('Explorar roles de mayor responsabilidad en contabilidad general, impuestos o auditor\u00eda interna.');
+            }
+            return recs.slice(0, 6);
+        },
+        recomendacionTexts: [
+            { min: 75, text: 'APTO para el cargo de Asistente Contable. El perfil DISC muestra alta compatibilidad con los requisitos del puesto. Demuestra competencias para ejecutar procesos contables con rigor, cumplir plazos DIAN, gestionar n\u00f3mina/PILA y mantener exactitud en registros.' },
+            { min: 55, text: 'APTO CON DESARROLLO. El perfil muestra compatibilidad media con el cargo de asistencia contable. Se recomienda plan de desarrollo enfocado en normativa tributaria actualizada y herramientas digitales (Excel avanzado, software contable).' },
+            { min: 40, text: 'REQUIERE EVALUACI\u00d3N ADICIONAL. El perfil muestra algunas fortalezas pero brechas para el rol de asistencia contable. Se recomienda entrevista por competencias t\u00e9cnicas y verificaci\u00f3n de experiencia en cierres contables.' },
+            { min: 0,  text: 'NO RECOMENDADO para el cargo de Asistente Contable. El perfil DISC no muestra la compatibilidad necesaria para la precisi\u00f3n y cumplimiento normativo que exige el rol.' }
+        ]
     }
 };
 
